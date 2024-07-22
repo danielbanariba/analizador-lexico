@@ -1,0 +1,1420 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> programa
+Rule 1     programa -> declaraciones
+Rule 2     declaraciones -> declaracion
+Rule 3     declaraciones -> declaraciones declaracion
+Rule 4     declaracion -> asignacion
+Rule 5     declaracion -> if_stmt
+Rule 6     declaracion -> while_stmt
+Rule 7     declaracion -> for_stmt
+Rule 8     declaracion -> funcion_def
+Rule 9     declaracion -> expresion
+Rule 10    declaracion -> print_stmt
+Rule 11    declaracion -> return_stmt
+Rule 12    asignacion -> IDENTIFICADOR OPERADOR_ASIGNACION expresion
+Rule 13    if_stmt -> IF expresion DOS_PUNTOS bloque
+Rule 14    if_stmt -> IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque
+Rule 15    while_stmt -> WHILE expresion DOS_PUNTOS bloque
+Rule 16    for_stmt -> FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque
+Rule 17    funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque
+Rule 18    parametros -> IDENTIFICADOR
+Rule 19    parametros -> parametros COMA IDENTIFICADOR
+Rule 20    parametros -> <empty>
+Rule 21    bloque -> declaracion
+Rule 22    bloque -> LLAVE_IZQ declaraciones LLAVE_DER
+Rule 23    expresion -> NUMERO
+Rule 24    expresion -> CADENA
+Rule 25    expresion -> IDENTIFICADOR
+Rule 26    expresion -> expresion OPERADOR_ARITMETICO expresion
+Rule 27    expresion -> expresion OPERADOR_COMPARACION expresion
+Rule 28    expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER
+Rule 29    print_stmt -> PRINT PARENTESIS_IZQ expresion PARENTESIS_DER
+Rule 30    return_stmt -> RETURN expresion
+
+Terminals, with rules where they appear
+
+CADENA               : 24
+COMA                 : 19
+DEF                  : 17
+DOS_PUNTOS           : 13 14 14 15 16 17
+ELSE                 : 14
+FOR                  : 16
+IDENTIFICADOR        : 12 16 17 18 19 25
+IF                   : 13 14
+IN                   : 16
+LLAVE_DER            : 22
+LLAVE_IZQ            : 22
+NUMERO               : 23
+OPERADOR_ARITMETICO  : 26
+OPERADOR_ASIGNACION  : 12
+OPERADOR_COMPARACION : 27
+PARENTESIS_DER       : 17 28 29
+PARENTESIS_IZQ       : 17 28 29
+PRINT                : 29
+RETURN               : 30
+WHILE                : 15
+error                : 
+
+Nonterminals, with rules where they appear
+
+asignacion           : 4
+bloque               : 13 14 14 15 16 17
+declaracion          : 2 3 21
+declaraciones        : 1 3 22
+expresion            : 9 12 13 14 15 16 26 26 27 27 28 29 30
+for_stmt             : 7
+funcion_def          : 8
+if_stmt              : 5
+parametros           : 17 19
+print_stmt           : 10
+programa             : 0
+return_stmt          : 11
+while_stmt           : 6
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . programa
+    (1) programa -> . declaraciones
+    (2) declaraciones -> . declaracion
+    (3) declaraciones -> . declaraciones declaracion
+    (4) declaracion -> . asignacion
+    (5) declaracion -> . if_stmt
+    (6) declaracion -> . while_stmt
+    (7) declaracion -> . for_stmt
+    (8) declaracion -> . funcion_def
+    (9) declaracion -> . expresion
+    (10) declaracion -> . print_stmt
+    (11) declaracion -> . return_stmt
+    (12) asignacion -> . IDENTIFICADOR OPERADOR_ASIGNACION expresion
+    (13) if_stmt -> . IF expresion DOS_PUNTOS bloque
+    (14) if_stmt -> . IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque
+    (15) while_stmt -> . WHILE expresion DOS_PUNTOS bloque
+    (16) for_stmt -> . FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque
+    (17) funcion_def -> . DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+    (29) print_stmt -> . PRINT PARENTESIS_IZQ expresion PARENTESIS_DER
+    (30) return_stmt -> . RETURN expresion
+
+    IDENTIFICADOR   shift and go to state 12
+    IF              shift and go to state 13
+    WHILE           shift and go to state 14
+    FOR             shift and go to state 15
+    DEF             shift and go to state 16
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    PARENTESIS_IZQ  shift and go to state 17
+    PRINT           shift and go to state 20
+    RETURN          shift and go to state 21
+
+    programa                       shift and go to state 1
+    declaraciones                  shift and go to state 2
+    declaracion                    shift and go to state 3
+    asignacion                     shift and go to state 4
+    if_stmt                        shift and go to state 5
+    while_stmt                     shift and go to state 6
+    for_stmt                       shift and go to state 7
+    funcion_def                    shift and go to state 8
+    expresion                      shift and go to state 9
+    print_stmt                     shift and go to state 10
+    return_stmt                    shift and go to state 11
+
+state 1
+
+    (0) S' -> programa .
+
+
+
+state 2
+
+    (1) programa -> declaraciones .
+    (3) declaraciones -> declaraciones . declaracion
+    (4) declaracion -> . asignacion
+    (5) declaracion -> . if_stmt
+    (6) declaracion -> . while_stmt
+    (7) declaracion -> . for_stmt
+    (8) declaracion -> . funcion_def
+    (9) declaracion -> . expresion
+    (10) declaracion -> . print_stmt
+    (11) declaracion -> . return_stmt
+    (12) asignacion -> . IDENTIFICADOR OPERADOR_ASIGNACION expresion
+    (13) if_stmt -> . IF expresion DOS_PUNTOS bloque
+    (14) if_stmt -> . IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque
+    (15) while_stmt -> . WHILE expresion DOS_PUNTOS bloque
+    (16) for_stmt -> . FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque
+    (17) funcion_def -> . DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+    (29) print_stmt -> . PRINT PARENTESIS_IZQ expresion PARENTESIS_DER
+    (30) return_stmt -> . RETURN expresion
+
+    $end            reduce using rule 1 (programa -> declaraciones .)
+    IDENTIFICADOR   shift and go to state 12
+    IF              shift and go to state 13
+    WHILE           shift and go to state 14
+    FOR             shift and go to state 15
+    DEF             shift and go to state 16
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    PARENTESIS_IZQ  shift and go to state 17
+    PRINT           shift and go to state 20
+    RETURN          shift and go to state 21
+
+    declaracion                    shift and go to state 22
+    asignacion                     shift and go to state 4
+    if_stmt                        shift and go to state 5
+    while_stmt                     shift and go to state 6
+    for_stmt                       shift and go to state 7
+    funcion_def                    shift and go to state 8
+    expresion                      shift and go to state 9
+    print_stmt                     shift and go to state 10
+    return_stmt                    shift and go to state 11
+
+state 3
+
+    (2) declaraciones -> declaracion .
+
+    IDENTIFICADOR   reduce using rule 2 (declaraciones -> declaracion .)
+    IF              reduce using rule 2 (declaraciones -> declaracion .)
+    WHILE           reduce using rule 2 (declaraciones -> declaracion .)
+    FOR             reduce using rule 2 (declaraciones -> declaracion .)
+    DEF             reduce using rule 2 (declaraciones -> declaracion .)
+    NUMERO          reduce using rule 2 (declaraciones -> declaracion .)
+    CADENA          reduce using rule 2 (declaraciones -> declaracion .)
+    PARENTESIS_IZQ  reduce using rule 2 (declaraciones -> declaracion .)
+    PRINT           reduce using rule 2 (declaraciones -> declaracion .)
+    RETURN          reduce using rule 2 (declaraciones -> declaracion .)
+    $end            reduce using rule 2 (declaraciones -> declaracion .)
+    LLAVE_DER       reduce using rule 2 (declaraciones -> declaracion .)
+
+
+state 4
+
+    (4) declaracion -> asignacion .
+
+    IDENTIFICADOR   reduce using rule 4 (declaracion -> asignacion .)
+    IF              reduce using rule 4 (declaracion -> asignacion .)
+    WHILE           reduce using rule 4 (declaracion -> asignacion .)
+    FOR             reduce using rule 4 (declaracion -> asignacion .)
+    DEF             reduce using rule 4 (declaracion -> asignacion .)
+    NUMERO          reduce using rule 4 (declaracion -> asignacion .)
+    CADENA          reduce using rule 4 (declaracion -> asignacion .)
+    PARENTESIS_IZQ  reduce using rule 4 (declaracion -> asignacion .)
+    PRINT           reduce using rule 4 (declaracion -> asignacion .)
+    RETURN          reduce using rule 4 (declaracion -> asignacion .)
+    $end            reduce using rule 4 (declaracion -> asignacion .)
+    ELSE            reduce using rule 4 (declaracion -> asignacion .)
+    LLAVE_DER       reduce using rule 4 (declaracion -> asignacion .)
+
+
+state 5
+
+    (5) declaracion -> if_stmt .
+
+    IDENTIFICADOR   reduce using rule 5 (declaracion -> if_stmt .)
+    IF              reduce using rule 5 (declaracion -> if_stmt .)
+    WHILE           reduce using rule 5 (declaracion -> if_stmt .)
+    FOR             reduce using rule 5 (declaracion -> if_stmt .)
+    DEF             reduce using rule 5 (declaracion -> if_stmt .)
+    NUMERO          reduce using rule 5 (declaracion -> if_stmt .)
+    CADENA          reduce using rule 5 (declaracion -> if_stmt .)
+    PARENTESIS_IZQ  reduce using rule 5 (declaracion -> if_stmt .)
+    PRINT           reduce using rule 5 (declaracion -> if_stmt .)
+    RETURN          reduce using rule 5 (declaracion -> if_stmt .)
+    $end            reduce using rule 5 (declaracion -> if_stmt .)
+    ELSE            reduce using rule 5 (declaracion -> if_stmt .)
+    LLAVE_DER       reduce using rule 5 (declaracion -> if_stmt .)
+
+
+state 6
+
+    (6) declaracion -> while_stmt .
+
+    IDENTIFICADOR   reduce using rule 6 (declaracion -> while_stmt .)
+    IF              reduce using rule 6 (declaracion -> while_stmt .)
+    WHILE           reduce using rule 6 (declaracion -> while_stmt .)
+    FOR             reduce using rule 6 (declaracion -> while_stmt .)
+    DEF             reduce using rule 6 (declaracion -> while_stmt .)
+    NUMERO          reduce using rule 6 (declaracion -> while_stmt .)
+    CADENA          reduce using rule 6 (declaracion -> while_stmt .)
+    PARENTESIS_IZQ  reduce using rule 6 (declaracion -> while_stmt .)
+    PRINT           reduce using rule 6 (declaracion -> while_stmt .)
+    RETURN          reduce using rule 6 (declaracion -> while_stmt .)
+    $end            reduce using rule 6 (declaracion -> while_stmt .)
+    ELSE            reduce using rule 6 (declaracion -> while_stmt .)
+    LLAVE_DER       reduce using rule 6 (declaracion -> while_stmt .)
+
+
+state 7
+
+    (7) declaracion -> for_stmt .
+
+    IDENTIFICADOR   reduce using rule 7 (declaracion -> for_stmt .)
+    IF              reduce using rule 7 (declaracion -> for_stmt .)
+    WHILE           reduce using rule 7 (declaracion -> for_stmt .)
+    FOR             reduce using rule 7 (declaracion -> for_stmt .)
+    DEF             reduce using rule 7 (declaracion -> for_stmt .)
+    NUMERO          reduce using rule 7 (declaracion -> for_stmt .)
+    CADENA          reduce using rule 7 (declaracion -> for_stmt .)
+    PARENTESIS_IZQ  reduce using rule 7 (declaracion -> for_stmt .)
+    PRINT           reduce using rule 7 (declaracion -> for_stmt .)
+    RETURN          reduce using rule 7 (declaracion -> for_stmt .)
+    $end            reduce using rule 7 (declaracion -> for_stmt .)
+    ELSE            reduce using rule 7 (declaracion -> for_stmt .)
+    LLAVE_DER       reduce using rule 7 (declaracion -> for_stmt .)
+
+
+state 8
+
+    (8) declaracion -> funcion_def .
+
+    IDENTIFICADOR   reduce using rule 8 (declaracion -> funcion_def .)
+    IF              reduce using rule 8 (declaracion -> funcion_def .)
+    WHILE           reduce using rule 8 (declaracion -> funcion_def .)
+    FOR             reduce using rule 8 (declaracion -> funcion_def .)
+    DEF             reduce using rule 8 (declaracion -> funcion_def .)
+    NUMERO          reduce using rule 8 (declaracion -> funcion_def .)
+    CADENA          reduce using rule 8 (declaracion -> funcion_def .)
+    PARENTESIS_IZQ  reduce using rule 8 (declaracion -> funcion_def .)
+    PRINT           reduce using rule 8 (declaracion -> funcion_def .)
+    RETURN          reduce using rule 8 (declaracion -> funcion_def .)
+    $end            reduce using rule 8 (declaracion -> funcion_def .)
+    ELSE            reduce using rule 8 (declaracion -> funcion_def .)
+    LLAVE_DER       reduce using rule 8 (declaracion -> funcion_def .)
+
+
+state 9
+
+    (9) declaracion -> expresion .
+    (26) expresion -> expresion . OPERADOR_ARITMETICO expresion
+    (27) expresion -> expresion . OPERADOR_COMPARACION expresion
+
+    IDENTIFICADOR   reduce using rule 9 (declaracion -> expresion .)
+    IF              reduce using rule 9 (declaracion -> expresion .)
+    WHILE           reduce using rule 9 (declaracion -> expresion .)
+    FOR             reduce using rule 9 (declaracion -> expresion .)
+    DEF             reduce using rule 9 (declaracion -> expresion .)
+    NUMERO          reduce using rule 9 (declaracion -> expresion .)
+    CADENA          reduce using rule 9 (declaracion -> expresion .)
+    PARENTESIS_IZQ  reduce using rule 9 (declaracion -> expresion .)
+    PRINT           reduce using rule 9 (declaracion -> expresion .)
+    RETURN          reduce using rule 9 (declaracion -> expresion .)
+    $end            reduce using rule 9 (declaracion -> expresion .)
+    ELSE            reduce using rule 9 (declaracion -> expresion .)
+    LLAVE_DER       reduce using rule 9 (declaracion -> expresion .)
+    OPERADOR_ARITMETICO shift and go to state 23
+    OPERADOR_COMPARACION shift and go to state 24
+
+
+state 10
+
+    (10) declaracion -> print_stmt .
+
+    IDENTIFICADOR   reduce using rule 10 (declaracion -> print_stmt .)
+    IF              reduce using rule 10 (declaracion -> print_stmt .)
+    WHILE           reduce using rule 10 (declaracion -> print_stmt .)
+    FOR             reduce using rule 10 (declaracion -> print_stmt .)
+    DEF             reduce using rule 10 (declaracion -> print_stmt .)
+    NUMERO          reduce using rule 10 (declaracion -> print_stmt .)
+    CADENA          reduce using rule 10 (declaracion -> print_stmt .)
+    PARENTESIS_IZQ  reduce using rule 10 (declaracion -> print_stmt .)
+    PRINT           reduce using rule 10 (declaracion -> print_stmt .)
+    RETURN          reduce using rule 10 (declaracion -> print_stmt .)
+    $end            reduce using rule 10 (declaracion -> print_stmt .)
+    ELSE            reduce using rule 10 (declaracion -> print_stmt .)
+    LLAVE_DER       reduce using rule 10 (declaracion -> print_stmt .)
+
+
+state 11
+
+    (11) declaracion -> return_stmt .
+
+    IDENTIFICADOR   reduce using rule 11 (declaracion -> return_stmt .)
+    IF              reduce using rule 11 (declaracion -> return_stmt .)
+    WHILE           reduce using rule 11 (declaracion -> return_stmt .)
+    FOR             reduce using rule 11 (declaracion -> return_stmt .)
+    DEF             reduce using rule 11 (declaracion -> return_stmt .)
+    NUMERO          reduce using rule 11 (declaracion -> return_stmt .)
+    CADENA          reduce using rule 11 (declaracion -> return_stmt .)
+    PARENTESIS_IZQ  reduce using rule 11 (declaracion -> return_stmt .)
+    PRINT           reduce using rule 11 (declaracion -> return_stmt .)
+    RETURN          reduce using rule 11 (declaracion -> return_stmt .)
+    $end            reduce using rule 11 (declaracion -> return_stmt .)
+    ELSE            reduce using rule 11 (declaracion -> return_stmt .)
+    LLAVE_DER       reduce using rule 11 (declaracion -> return_stmt .)
+
+
+state 12
+
+    (12) asignacion -> IDENTIFICADOR . OPERADOR_ASIGNACION expresion
+    (25) expresion -> IDENTIFICADOR .
+
+    OPERADOR_ASIGNACION shift and go to state 25
+    OPERADOR_ARITMETICO reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    OPERADOR_COMPARACION reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    IDENTIFICADOR   reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    IF              reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    WHILE           reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    FOR             reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    DEF             reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    NUMERO          reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    CADENA          reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    PARENTESIS_IZQ  reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    PRINT           reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    RETURN          reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    $end            reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    ELSE            reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    LLAVE_DER       reduce using rule 25 (expresion -> IDENTIFICADOR .)
+
+
+state 13
+
+    (13) if_stmt -> IF . expresion DOS_PUNTOS bloque
+    (14) if_stmt -> IF . expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    IDENTIFICADOR   shift and go to state 27
+    PARENTESIS_IZQ  shift and go to state 17
+
+    expresion                      shift and go to state 26
+
+state 14
+
+    (15) while_stmt -> WHILE . expresion DOS_PUNTOS bloque
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    IDENTIFICADOR   shift and go to state 27
+    PARENTESIS_IZQ  shift and go to state 17
+
+    expresion                      shift and go to state 28
+
+state 15
+
+    (16) for_stmt -> FOR . IDENTIFICADOR IN expresion DOS_PUNTOS bloque
+
+    IDENTIFICADOR   shift and go to state 29
+
+
+state 16
+
+    (17) funcion_def -> DEF . IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque
+
+    IDENTIFICADOR   shift and go to state 30
+
+
+state 17
+
+    (28) expresion -> PARENTESIS_IZQ . expresion PARENTESIS_DER
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    IDENTIFICADOR   shift and go to state 27
+    PARENTESIS_IZQ  shift and go to state 17
+
+    expresion                      shift and go to state 31
+
+state 18
+
+    (23) expresion -> NUMERO .
+
+    OPERADOR_ARITMETICO reduce using rule 23 (expresion -> NUMERO .)
+    OPERADOR_COMPARACION reduce using rule 23 (expresion -> NUMERO .)
+    IDENTIFICADOR   reduce using rule 23 (expresion -> NUMERO .)
+    IF              reduce using rule 23 (expresion -> NUMERO .)
+    WHILE           reduce using rule 23 (expresion -> NUMERO .)
+    FOR             reduce using rule 23 (expresion -> NUMERO .)
+    DEF             reduce using rule 23 (expresion -> NUMERO .)
+    NUMERO          reduce using rule 23 (expresion -> NUMERO .)
+    CADENA          reduce using rule 23 (expresion -> NUMERO .)
+    PARENTESIS_IZQ  reduce using rule 23 (expresion -> NUMERO .)
+    PRINT           reduce using rule 23 (expresion -> NUMERO .)
+    RETURN          reduce using rule 23 (expresion -> NUMERO .)
+    $end            reduce using rule 23 (expresion -> NUMERO .)
+    DOS_PUNTOS      reduce using rule 23 (expresion -> NUMERO .)
+    PARENTESIS_DER  reduce using rule 23 (expresion -> NUMERO .)
+    ELSE            reduce using rule 23 (expresion -> NUMERO .)
+    LLAVE_DER       reduce using rule 23 (expresion -> NUMERO .)
+
+
+state 19
+
+    (24) expresion -> CADENA .
+
+    OPERADOR_ARITMETICO reduce using rule 24 (expresion -> CADENA .)
+    OPERADOR_COMPARACION reduce using rule 24 (expresion -> CADENA .)
+    IDENTIFICADOR   reduce using rule 24 (expresion -> CADENA .)
+    IF              reduce using rule 24 (expresion -> CADENA .)
+    WHILE           reduce using rule 24 (expresion -> CADENA .)
+    FOR             reduce using rule 24 (expresion -> CADENA .)
+    DEF             reduce using rule 24 (expresion -> CADENA .)
+    NUMERO          reduce using rule 24 (expresion -> CADENA .)
+    CADENA          reduce using rule 24 (expresion -> CADENA .)
+    PARENTESIS_IZQ  reduce using rule 24 (expresion -> CADENA .)
+    PRINT           reduce using rule 24 (expresion -> CADENA .)
+    RETURN          reduce using rule 24 (expresion -> CADENA .)
+    $end            reduce using rule 24 (expresion -> CADENA .)
+    DOS_PUNTOS      reduce using rule 24 (expresion -> CADENA .)
+    PARENTESIS_DER  reduce using rule 24 (expresion -> CADENA .)
+    ELSE            reduce using rule 24 (expresion -> CADENA .)
+    LLAVE_DER       reduce using rule 24 (expresion -> CADENA .)
+
+
+state 20
+
+    (29) print_stmt -> PRINT . PARENTESIS_IZQ expresion PARENTESIS_DER
+
+    PARENTESIS_IZQ  shift and go to state 32
+
+
+state 21
+
+    (30) return_stmt -> RETURN . expresion
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    IDENTIFICADOR   shift and go to state 27
+    PARENTESIS_IZQ  shift and go to state 17
+
+    expresion                      shift and go to state 33
+
+state 22
+
+    (3) declaraciones -> declaraciones declaracion .
+
+    IDENTIFICADOR   reduce using rule 3 (declaraciones -> declaraciones declaracion .)
+    IF              reduce using rule 3 (declaraciones -> declaraciones declaracion .)
+    WHILE           reduce using rule 3 (declaraciones -> declaraciones declaracion .)
+    FOR             reduce using rule 3 (declaraciones -> declaraciones declaracion .)
+    DEF             reduce using rule 3 (declaraciones -> declaraciones declaracion .)
+    NUMERO          reduce using rule 3 (declaraciones -> declaraciones declaracion .)
+    CADENA          reduce using rule 3 (declaraciones -> declaraciones declaracion .)
+    PARENTESIS_IZQ  reduce using rule 3 (declaraciones -> declaraciones declaracion .)
+    PRINT           reduce using rule 3 (declaraciones -> declaraciones declaracion .)
+    RETURN          reduce using rule 3 (declaraciones -> declaraciones declaracion .)
+    $end            reduce using rule 3 (declaraciones -> declaraciones declaracion .)
+    LLAVE_DER       reduce using rule 3 (declaraciones -> declaraciones declaracion .)
+
+
+state 23
+
+    (26) expresion -> expresion OPERADOR_ARITMETICO . expresion
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    IDENTIFICADOR   shift and go to state 27
+    PARENTESIS_IZQ  shift and go to state 17
+
+    expresion                      shift and go to state 34
+
+state 24
+
+    (27) expresion -> expresion OPERADOR_COMPARACION . expresion
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    IDENTIFICADOR   shift and go to state 27
+    PARENTESIS_IZQ  shift and go to state 17
+
+    expresion                      shift and go to state 35
+
+state 25
+
+    (12) asignacion -> IDENTIFICADOR OPERADOR_ASIGNACION . expresion
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    IDENTIFICADOR   shift and go to state 27
+    PARENTESIS_IZQ  shift and go to state 17
+
+    expresion                      shift and go to state 36
+
+state 26
+
+    (13) if_stmt -> IF expresion . DOS_PUNTOS bloque
+    (14) if_stmt -> IF expresion . DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque
+    (26) expresion -> expresion . OPERADOR_ARITMETICO expresion
+    (27) expresion -> expresion . OPERADOR_COMPARACION expresion
+
+    DOS_PUNTOS      shift and go to state 37
+    OPERADOR_ARITMETICO shift and go to state 23
+    OPERADOR_COMPARACION shift and go to state 24
+
+
+state 27
+
+    (25) expresion -> IDENTIFICADOR .
+
+    DOS_PUNTOS      reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    OPERADOR_ARITMETICO reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    OPERADOR_COMPARACION reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    PARENTESIS_DER  reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    IDENTIFICADOR   reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    IF              reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    WHILE           reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    FOR             reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    DEF             reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    NUMERO          reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    CADENA          reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    PARENTESIS_IZQ  reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    PRINT           reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    RETURN          reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    $end            reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    ELSE            reduce using rule 25 (expresion -> IDENTIFICADOR .)
+    LLAVE_DER       reduce using rule 25 (expresion -> IDENTIFICADOR .)
+
+
+state 28
+
+    (15) while_stmt -> WHILE expresion . DOS_PUNTOS bloque
+    (26) expresion -> expresion . OPERADOR_ARITMETICO expresion
+    (27) expresion -> expresion . OPERADOR_COMPARACION expresion
+
+    DOS_PUNTOS      shift and go to state 38
+    OPERADOR_ARITMETICO shift and go to state 23
+    OPERADOR_COMPARACION shift and go to state 24
+
+
+state 29
+
+    (16) for_stmt -> FOR IDENTIFICADOR . IN expresion DOS_PUNTOS bloque
+
+    IN              shift and go to state 39
+
+
+state 30
+
+    (17) funcion_def -> DEF IDENTIFICADOR . PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque
+
+    PARENTESIS_IZQ  shift and go to state 40
+
+
+state 31
+
+    (28) expresion -> PARENTESIS_IZQ expresion . PARENTESIS_DER
+    (26) expresion -> expresion . OPERADOR_ARITMETICO expresion
+    (27) expresion -> expresion . OPERADOR_COMPARACION expresion
+
+    PARENTESIS_DER  shift and go to state 41
+    OPERADOR_ARITMETICO shift and go to state 23
+    OPERADOR_COMPARACION shift and go to state 24
+
+
+state 32
+
+    (29) print_stmt -> PRINT PARENTESIS_IZQ . expresion PARENTESIS_DER
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    IDENTIFICADOR   shift and go to state 27
+    PARENTESIS_IZQ  shift and go to state 17
+
+    expresion                      shift and go to state 42
+
+state 33
+
+    (30) return_stmt -> RETURN expresion .
+    (26) expresion -> expresion . OPERADOR_ARITMETICO expresion
+    (27) expresion -> expresion . OPERADOR_COMPARACION expresion
+
+    IDENTIFICADOR   reduce using rule 30 (return_stmt -> RETURN expresion .)
+    IF              reduce using rule 30 (return_stmt -> RETURN expresion .)
+    WHILE           reduce using rule 30 (return_stmt -> RETURN expresion .)
+    FOR             reduce using rule 30 (return_stmt -> RETURN expresion .)
+    DEF             reduce using rule 30 (return_stmt -> RETURN expresion .)
+    NUMERO          reduce using rule 30 (return_stmt -> RETURN expresion .)
+    CADENA          reduce using rule 30 (return_stmt -> RETURN expresion .)
+    PARENTESIS_IZQ  reduce using rule 30 (return_stmt -> RETURN expresion .)
+    PRINT           reduce using rule 30 (return_stmt -> RETURN expresion .)
+    RETURN          reduce using rule 30 (return_stmt -> RETURN expresion .)
+    $end            reduce using rule 30 (return_stmt -> RETURN expresion .)
+    ELSE            reduce using rule 30 (return_stmt -> RETURN expresion .)
+    LLAVE_DER       reduce using rule 30 (return_stmt -> RETURN expresion .)
+    OPERADOR_ARITMETICO shift and go to state 23
+    OPERADOR_COMPARACION shift and go to state 24
+
+
+state 34
+
+    (26) expresion -> expresion OPERADOR_ARITMETICO expresion .
+    (26) expresion -> expresion . OPERADOR_ARITMETICO expresion
+    (27) expresion -> expresion . OPERADOR_COMPARACION expresion
+
+  ! shift/reduce conflict for OPERADOR_ARITMETICO resolved as shift
+  ! shift/reduce conflict for OPERADOR_COMPARACION resolved as shift
+    IDENTIFICADOR   reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .)
+    IF              reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .)
+    WHILE           reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .)
+    FOR             reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .)
+    DEF             reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .)
+    NUMERO          reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .)
+    CADENA          reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .)
+    PARENTESIS_IZQ  reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .)
+    PRINT           reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .)
+    RETURN          reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .)
+    $end            reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .)
+    DOS_PUNTOS      reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .)
+    PARENTESIS_DER  reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .)
+    ELSE            reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .)
+    LLAVE_DER       reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .)
+    OPERADOR_ARITMETICO shift and go to state 23
+    OPERADOR_COMPARACION shift and go to state 24
+
+  ! OPERADOR_ARITMETICO [ reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .) ]
+  ! OPERADOR_COMPARACION [ reduce using rule 26 (expresion -> expresion OPERADOR_ARITMETICO expresion .) ]
+
+
+state 35
+
+    (27) expresion -> expresion OPERADOR_COMPARACION expresion .
+    (26) expresion -> expresion . OPERADOR_ARITMETICO expresion
+    (27) expresion -> expresion . OPERADOR_COMPARACION expresion
+
+  ! shift/reduce conflict for OPERADOR_ARITMETICO resolved as shift
+  ! shift/reduce conflict for OPERADOR_COMPARACION resolved as shift
+    IDENTIFICADOR   reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .)
+    IF              reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .)
+    WHILE           reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .)
+    FOR             reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .)
+    DEF             reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .)
+    NUMERO          reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .)
+    CADENA          reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .)
+    PARENTESIS_IZQ  reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .)
+    PRINT           reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .)
+    RETURN          reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .)
+    $end            reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .)
+    DOS_PUNTOS      reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .)
+    PARENTESIS_DER  reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .)
+    ELSE            reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .)
+    LLAVE_DER       reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .)
+    OPERADOR_ARITMETICO shift and go to state 23
+    OPERADOR_COMPARACION shift and go to state 24
+
+  ! OPERADOR_ARITMETICO [ reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .) ]
+  ! OPERADOR_COMPARACION [ reduce using rule 27 (expresion -> expresion OPERADOR_COMPARACION expresion .) ]
+
+
+state 36
+
+    (12) asignacion -> IDENTIFICADOR OPERADOR_ASIGNACION expresion .
+    (26) expresion -> expresion . OPERADOR_ARITMETICO expresion
+    (27) expresion -> expresion . OPERADOR_COMPARACION expresion
+
+    IDENTIFICADOR   reduce using rule 12 (asignacion -> IDENTIFICADOR OPERADOR_ASIGNACION expresion .)
+    IF              reduce using rule 12 (asignacion -> IDENTIFICADOR OPERADOR_ASIGNACION expresion .)
+    WHILE           reduce using rule 12 (asignacion -> IDENTIFICADOR OPERADOR_ASIGNACION expresion .)
+    FOR             reduce using rule 12 (asignacion -> IDENTIFICADOR OPERADOR_ASIGNACION expresion .)
+    DEF             reduce using rule 12 (asignacion -> IDENTIFICADOR OPERADOR_ASIGNACION expresion .)
+    NUMERO          reduce using rule 12 (asignacion -> IDENTIFICADOR OPERADOR_ASIGNACION expresion .)
+    CADENA          reduce using rule 12 (asignacion -> IDENTIFICADOR OPERADOR_ASIGNACION expresion .)
+    PARENTESIS_IZQ  reduce using rule 12 (asignacion -> IDENTIFICADOR OPERADOR_ASIGNACION expresion .)
+    PRINT           reduce using rule 12 (asignacion -> IDENTIFICADOR OPERADOR_ASIGNACION expresion .)
+    RETURN          reduce using rule 12 (asignacion -> IDENTIFICADOR OPERADOR_ASIGNACION expresion .)
+    $end            reduce using rule 12 (asignacion -> IDENTIFICADOR OPERADOR_ASIGNACION expresion .)
+    ELSE            reduce using rule 12 (asignacion -> IDENTIFICADOR OPERADOR_ASIGNACION expresion .)
+    LLAVE_DER       reduce using rule 12 (asignacion -> IDENTIFICADOR OPERADOR_ASIGNACION expresion .)
+    OPERADOR_ARITMETICO shift and go to state 23
+    OPERADOR_COMPARACION shift and go to state 24
+
+
+state 37
+
+    (13) if_stmt -> IF expresion DOS_PUNTOS . bloque
+    (14) if_stmt -> IF expresion DOS_PUNTOS . bloque ELSE DOS_PUNTOS bloque
+    (21) bloque -> . declaracion
+    (22) bloque -> . LLAVE_IZQ declaraciones LLAVE_DER
+    (4) declaracion -> . asignacion
+    (5) declaracion -> . if_stmt
+    (6) declaracion -> . while_stmt
+    (7) declaracion -> . for_stmt
+    (8) declaracion -> . funcion_def
+    (9) declaracion -> . expresion
+    (10) declaracion -> . print_stmt
+    (11) declaracion -> . return_stmt
+    (12) asignacion -> . IDENTIFICADOR OPERADOR_ASIGNACION expresion
+    (13) if_stmt -> . IF expresion DOS_PUNTOS bloque
+    (14) if_stmt -> . IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque
+    (15) while_stmt -> . WHILE expresion DOS_PUNTOS bloque
+    (16) for_stmt -> . FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque
+    (17) funcion_def -> . DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+    (29) print_stmt -> . PRINT PARENTESIS_IZQ expresion PARENTESIS_DER
+    (30) return_stmt -> . RETURN expresion
+
+    LLAVE_IZQ       shift and go to state 45
+    IDENTIFICADOR   shift and go to state 12
+    IF              shift and go to state 13
+    WHILE           shift and go to state 14
+    FOR             shift and go to state 15
+    DEF             shift and go to state 16
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    PARENTESIS_IZQ  shift and go to state 17
+    PRINT           shift and go to state 20
+    RETURN          shift and go to state 21
+
+    expresion                      shift and go to state 9
+    bloque                         shift and go to state 43
+    declaracion                    shift and go to state 44
+    asignacion                     shift and go to state 4
+    if_stmt                        shift and go to state 5
+    while_stmt                     shift and go to state 6
+    for_stmt                       shift and go to state 7
+    funcion_def                    shift and go to state 8
+    print_stmt                     shift and go to state 10
+    return_stmt                    shift and go to state 11
+
+state 38
+
+    (15) while_stmt -> WHILE expresion DOS_PUNTOS . bloque
+    (21) bloque -> . declaracion
+    (22) bloque -> . LLAVE_IZQ declaraciones LLAVE_DER
+    (4) declaracion -> . asignacion
+    (5) declaracion -> . if_stmt
+    (6) declaracion -> . while_stmt
+    (7) declaracion -> . for_stmt
+    (8) declaracion -> . funcion_def
+    (9) declaracion -> . expresion
+    (10) declaracion -> . print_stmt
+    (11) declaracion -> . return_stmt
+    (12) asignacion -> . IDENTIFICADOR OPERADOR_ASIGNACION expresion
+    (13) if_stmt -> . IF expresion DOS_PUNTOS bloque
+    (14) if_stmt -> . IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque
+    (15) while_stmt -> . WHILE expresion DOS_PUNTOS bloque
+    (16) for_stmt -> . FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque
+    (17) funcion_def -> . DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+    (29) print_stmt -> . PRINT PARENTESIS_IZQ expresion PARENTESIS_DER
+    (30) return_stmt -> . RETURN expresion
+
+    LLAVE_IZQ       shift and go to state 45
+    IDENTIFICADOR   shift and go to state 12
+    IF              shift and go to state 13
+    WHILE           shift and go to state 14
+    FOR             shift and go to state 15
+    DEF             shift and go to state 16
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    PARENTESIS_IZQ  shift and go to state 17
+    PRINT           shift and go to state 20
+    RETURN          shift and go to state 21
+
+    expresion                      shift and go to state 9
+    bloque                         shift and go to state 46
+    declaracion                    shift and go to state 44
+    asignacion                     shift and go to state 4
+    if_stmt                        shift and go to state 5
+    while_stmt                     shift and go to state 6
+    for_stmt                       shift and go to state 7
+    funcion_def                    shift and go to state 8
+    print_stmt                     shift and go to state 10
+    return_stmt                    shift and go to state 11
+
+state 39
+
+    (16) for_stmt -> FOR IDENTIFICADOR IN . expresion DOS_PUNTOS bloque
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    IDENTIFICADOR   shift and go to state 27
+    PARENTESIS_IZQ  shift and go to state 17
+
+    expresion                      shift and go to state 47
+
+state 40
+
+    (17) funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ . parametros PARENTESIS_DER DOS_PUNTOS bloque
+    (18) parametros -> . IDENTIFICADOR
+    (19) parametros -> . parametros COMA IDENTIFICADOR
+    (20) parametros -> .
+
+    IDENTIFICADOR   shift and go to state 48
+    PARENTESIS_DER  reduce using rule 20 (parametros -> .)
+    COMA            reduce using rule 20 (parametros -> .)
+
+    parametros                     shift and go to state 49
+
+state 41
+
+    (28) expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .
+
+    OPERADOR_ARITMETICO reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    OPERADOR_COMPARACION reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    IDENTIFICADOR   reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    IF              reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    WHILE           reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    FOR             reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    DEF             reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    NUMERO          reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    CADENA          reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    PARENTESIS_IZQ  reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    PRINT           reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    RETURN          reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    $end            reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    DOS_PUNTOS      reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    PARENTESIS_DER  reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    ELSE            reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    LLAVE_DER       reduce using rule 28 (expresion -> PARENTESIS_IZQ expresion PARENTESIS_DER .)
+
+
+state 42
+
+    (29) print_stmt -> PRINT PARENTESIS_IZQ expresion . PARENTESIS_DER
+    (26) expresion -> expresion . OPERADOR_ARITMETICO expresion
+    (27) expresion -> expresion . OPERADOR_COMPARACION expresion
+
+    PARENTESIS_DER  shift and go to state 50
+    OPERADOR_ARITMETICO shift and go to state 23
+    OPERADOR_COMPARACION shift and go to state 24
+
+
+state 43
+
+    (13) if_stmt -> IF expresion DOS_PUNTOS bloque .
+    (14) if_stmt -> IF expresion DOS_PUNTOS bloque . ELSE DOS_PUNTOS bloque
+
+  ! shift/reduce conflict for ELSE resolved as shift
+    IDENTIFICADOR   reduce using rule 13 (if_stmt -> IF expresion DOS_PUNTOS bloque .)
+    IF              reduce using rule 13 (if_stmt -> IF expresion DOS_PUNTOS bloque .)
+    WHILE           reduce using rule 13 (if_stmt -> IF expresion DOS_PUNTOS bloque .)
+    FOR             reduce using rule 13 (if_stmt -> IF expresion DOS_PUNTOS bloque .)
+    DEF             reduce using rule 13 (if_stmt -> IF expresion DOS_PUNTOS bloque .)
+    NUMERO          reduce using rule 13 (if_stmt -> IF expresion DOS_PUNTOS bloque .)
+    CADENA          reduce using rule 13 (if_stmt -> IF expresion DOS_PUNTOS bloque .)
+    PARENTESIS_IZQ  reduce using rule 13 (if_stmt -> IF expresion DOS_PUNTOS bloque .)
+    PRINT           reduce using rule 13 (if_stmt -> IF expresion DOS_PUNTOS bloque .)
+    RETURN          reduce using rule 13 (if_stmt -> IF expresion DOS_PUNTOS bloque .)
+    $end            reduce using rule 13 (if_stmt -> IF expresion DOS_PUNTOS bloque .)
+    LLAVE_DER       reduce using rule 13 (if_stmt -> IF expresion DOS_PUNTOS bloque .)
+    ELSE            shift and go to state 51
+
+  ! ELSE            [ reduce using rule 13 (if_stmt -> IF expresion DOS_PUNTOS bloque .) ]
+
+
+state 44
+
+    (21) bloque -> declaracion .
+
+    ELSE            reduce using rule 21 (bloque -> declaracion .)
+    IDENTIFICADOR   reduce using rule 21 (bloque -> declaracion .)
+    IF              reduce using rule 21 (bloque -> declaracion .)
+    WHILE           reduce using rule 21 (bloque -> declaracion .)
+    FOR             reduce using rule 21 (bloque -> declaracion .)
+    DEF             reduce using rule 21 (bloque -> declaracion .)
+    NUMERO          reduce using rule 21 (bloque -> declaracion .)
+    CADENA          reduce using rule 21 (bloque -> declaracion .)
+    PARENTESIS_IZQ  reduce using rule 21 (bloque -> declaracion .)
+    PRINT           reduce using rule 21 (bloque -> declaracion .)
+    RETURN          reduce using rule 21 (bloque -> declaracion .)
+    $end            reduce using rule 21 (bloque -> declaracion .)
+    LLAVE_DER       reduce using rule 21 (bloque -> declaracion .)
+
+
+state 45
+
+    (22) bloque -> LLAVE_IZQ . declaraciones LLAVE_DER
+    (2) declaraciones -> . declaracion
+    (3) declaraciones -> . declaraciones declaracion
+    (4) declaracion -> . asignacion
+    (5) declaracion -> . if_stmt
+    (6) declaracion -> . while_stmt
+    (7) declaracion -> . for_stmt
+    (8) declaracion -> . funcion_def
+    (9) declaracion -> . expresion
+    (10) declaracion -> . print_stmt
+    (11) declaracion -> . return_stmt
+    (12) asignacion -> . IDENTIFICADOR OPERADOR_ASIGNACION expresion
+    (13) if_stmt -> . IF expresion DOS_PUNTOS bloque
+    (14) if_stmt -> . IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque
+    (15) while_stmt -> . WHILE expresion DOS_PUNTOS bloque
+    (16) for_stmt -> . FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque
+    (17) funcion_def -> . DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+    (29) print_stmt -> . PRINT PARENTESIS_IZQ expresion PARENTESIS_DER
+    (30) return_stmt -> . RETURN expresion
+
+    IDENTIFICADOR   shift and go to state 12
+    IF              shift and go to state 13
+    WHILE           shift and go to state 14
+    FOR             shift and go to state 15
+    DEF             shift and go to state 16
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    PARENTESIS_IZQ  shift and go to state 17
+    PRINT           shift and go to state 20
+    RETURN          shift and go to state 21
+
+    declaraciones                  shift and go to state 52
+    declaracion                    shift and go to state 3
+    asignacion                     shift and go to state 4
+    if_stmt                        shift and go to state 5
+    while_stmt                     shift and go to state 6
+    for_stmt                       shift and go to state 7
+    funcion_def                    shift and go to state 8
+    expresion                      shift and go to state 9
+    print_stmt                     shift and go to state 10
+    return_stmt                    shift and go to state 11
+
+state 46
+
+    (15) while_stmt -> WHILE expresion DOS_PUNTOS bloque .
+
+    IDENTIFICADOR   reduce using rule 15 (while_stmt -> WHILE expresion DOS_PUNTOS bloque .)
+    IF              reduce using rule 15 (while_stmt -> WHILE expresion DOS_PUNTOS bloque .)
+    WHILE           reduce using rule 15 (while_stmt -> WHILE expresion DOS_PUNTOS bloque .)
+    FOR             reduce using rule 15 (while_stmt -> WHILE expresion DOS_PUNTOS bloque .)
+    DEF             reduce using rule 15 (while_stmt -> WHILE expresion DOS_PUNTOS bloque .)
+    NUMERO          reduce using rule 15 (while_stmt -> WHILE expresion DOS_PUNTOS bloque .)
+    CADENA          reduce using rule 15 (while_stmt -> WHILE expresion DOS_PUNTOS bloque .)
+    PARENTESIS_IZQ  reduce using rule 15 (while_stmt -> WHILE expresion DOS_PUNTOS bloque .)
+    PRINT           reduce using rule 15 (while_stmt -> WHILE expresion DOS_PUNTOS bloque .)
+    RETURN          reduce using rule 15 (while_stmt -> WHILE expresion DOS_PUNTOS bloque .)
+    $end            reduce using rule 15 (while_stmt -> WHILE expresion DOS_PUNTOS bloque .)
+    ELSE            reduce using rule 15 (while_stmt -> WHILE expresion DOS_PUNTOS bloque .)
+    LLAVE_DER       reduce using rule 15 (while_stmt -> WHILE expresion DOS_PUNTOS bloque .)
+
+
+state 47
+
+    (16) for_stmt -> FOR IDENTIFICADOR IN expresion . DOS_PUNTOS bloque
+    (26) expresion -> expresion . OPERADOR_ARITMETICO expresion
+    (27) expresion -> expresion . OPERADOR_COMPARACION expresion
+
+    DOS_PUNTOS      shift and go to state 53
+    OPERADOR_ARITMETICO shift and go to state 23
+    OPERADOR_COMPARACION shift and go to state 24
+
+
+state 48
+
+    (18) parametros -> IDENTIFICADOR .
+
+    PARENTESIS_DER  reduce using rule 18 (parametros -> IDENTIFICADOR .)
+    COMA            reduce using rule 18 (parametros -> IDENTIFICADOR .)
+
+
+state 49
+
+    (17) funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros . PARENTESIS_DER DOS_PUNTOS bloque
+    (19) parametros -> parametros . COMA IDENTIFICADOR
+
+    PARENTESIS_DER  shift and go to state 54
+    COMA            shift and go to state 55
+
+
+state 50
+
+    (29) print_stmt -> PRINT PARENTESIS_IZQ expresion PARENTESIS_DER .
+
+    IDENTIFICADOR   reduce using rule 29 (print_stmt -> PRINT PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    IF              reduce using rule 29 (print_stmt -> PRINT PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    WHILE           reduce using rule 29 (print_stmt -> PRINT PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    FOR             reduce using rule 29 (print_stmt -> PRINT PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    DEF             reduce using rule 29 (print_stmt -> PRINT PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    NUMERO          reduce using rule 29 (print_stmt -> PRINT PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    CADENA          reduce using rule 29 (print_stmt -> PRINT PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    PARENTESIS_IZQ  reduce using rule 29 (print_stmt -> PRINT PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    PRINT           reduce using rule 29 (print_stmt -> PRINT PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    RETURN          reduce using rule 29 (print_stmt -> PRINT PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    $end            reduce using rule 29 (print_stmt -> PRINT PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    ELSE            reduce using rule 29 (print_stmt -> PRINT PARENTESIS_IZQ expresion PARENTESIS_DER .)
+    LLAVE_DER       reduce using rule 29 (print_stmt -> PRINT PARENTESIS_IZQ expresion PARENTESIS_DER .)
+
+
+state 51
+
+    (14) if_stmt -> IF expresion DOS_PUNTOS bloque ELSE . DOS_PUNTOS bloque
+
+    DOS_PUNTOS      shift and go to state 56
+
+
+state 52
+
+    (22) bloque -> LLAVE_IZQ declaraciones . LLAVE_DER
+    (3) declaraciones -> declaraciones . declaracion
+    (4) declaracion -> . asignacion
+    (5) declaracion -> . if_stmt
+    (6) declaracion -> . while_stmt
+    (7) declaracion -> . for_stmt
+    (8) declaracion -> . funcion_def
+    (9) declaracion -> . expresion
+    (10) declaracion -> . print_stmt
+    (11) declaracion -> . return_stmt
+    (12) asignacion -> . IDENTIFICADOR OPERADOR_ASIGNACION expresion
+    (13) if_stmt -> . IF expresion DOS_PUNTOS bloque
+    (14) if_stmt -> . IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque
+    (15) while_stmt -> . WHILE expresion DOS_PUNTOS bloque
+    (16) for_stmt -> . FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque
+    (17) funcion_def -> . DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+    (29) print_stmt -> . PRINT PARENTESIS_IZQ expresion PARENTESIS_DER
+    (30) return_stmt -> . RETURN expresion
+
+    LLAVE_DER       shift and go to state 57
+    IDENTIFICADOR   shift and go to state 12
+    IF              shift and go to state 13
+    WHILE           shift and go to state 14
+    FOR             shift and go to state 15
+    DEF             shift and go to state 16
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    PARENTESIS_IZQ  shift and go to state 17
+    PRINT           shift and go to state 20
+    RETURN          shift and go to state 21
+
+    declaracion                    shift and go to state 22
+    asignacion                     shift and go to state 4
+    if_stmt                        shift and go to state 5
+    while_stmt                     shift and go to state 6
+    for_stmt                       shift and go to state 7
+    funcion_def                    shift and go to state 8
+    expresion                      shift and go to state 9
+    print_stmt                     shift and go to state 10
+    return_stmt                    shift and go to state 11
+
+state 53
+
+    (16) for_stmt -> FOR IDENTIFICADOR IN expresion DOS_PUNTOS . bloque
+    (21) bloque -> . declaracion
+    (22) bloque -> . LLAVE_IZQ declaraciones LLAVE_DER
+    (4) declaracion -> . asignacion
+    (5) declaracion -> . if_stmt
+    (6) declaracion -> . while_stmt
+    (7) declaracion -> . for_stmt
+    (8) declaracion -> . funcion_def
+    (9) declaracion -> . expresion
+    (10) declaracion -> . print_stmt
+    (11) declaracion -> . return_stmt
+    (12) asignacion -> . IDENTIFICADOR OPERADOR_ASIGNACION expresion
+    (13) if_stmt -> . IF expresion DOS_PUNTOS bloque
+    (14) if_stmt -> . IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque
+    (15) while_stmt -> . WHILE expresion DOS_PUNTOS bloque
+    (16) for_stmt -> . FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque
+    (17) funcion_def -> . DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+    (29) print_stmt -> . PRINT PARENTESIS_IZQ expresion PARENTESIS_DER
+    (30) return_stmt -> . RETURN expresion
+
+    LLAVE_IZQ       shift and go to state 45
+    IDENTIFICADOR   shift and go to state 12
+    IF              shift and go to state 13
+    WHILE           shift and go to state 14
+    FOR             shift and go to state 15
+    DEF             shift and go to state 16
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    PARENTESIS_IZQ  shift and go to state 17
+    PRINT           shift and go to state 20
+    RETURN          shift and go to state 21
+
+    expresion                      shift and go to state 9
+    bloque                         shift and go to state 58
+    declaracion                    shift and go to state 44
+    asignacion                     shift and go to state 4
+    if_stmt                        shift and go to state 5
+    while_stmt                     shift and go to state 6
+    for_stmt                       shift and go to state 7
+    funcion_def                    shift and go to state 8
+    print_stmt                     shift and go to state 10
+    return_stmt                    shift and go to state 11
+
+state 54
+
+    (17) funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER . DOS_PUNTOS bloque
+
+    DOS_PUNTOS      shift and go to state 59
+
+
+state 55
+
+    (19) parametros -> parametros COMA . IDENTIFICADOR
+
+    IDENTIFICADOR   shift and go to state 60
+
+
+state 56
+
+    (14) if_stmt -> IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS . bloque
+    (21) bloque -> . declaracion
+    (22) bloque -> . LLAVE_IZQ declaraciones LLAVE_DER
+    (4) declaracion -> . asignacion
+    (5) declaracion -> . if_stmt
+    (6) declaracion -> . while_stmt
+    (7) declaracion -> . for_stmt
+    (8) declaracion -> . funcion_def
+    (9) declaracion -> . expresion
+    (10) declaracion -> . print_stmt
+    (11) declaracion -> . return_stmt
+    (12) asignacion -> . IDENTIFICADOR OPERADOR_ASIGNACION expresion
+    (13) if_stmt -> . IF expresion DOS_PUNTOS bloque
+    (14) if_stmt -> . IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque
+    (15) while_stmt -> . WHILE expresion DOS_PUNTOS bloque
+    (16) for_stmt -> . FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque
+    (17) funcion_def -> . DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+    (29) print_stmt -> . PRINT PARENTESIS_IZQ expresion PARENTESIS_DER
+    (30) return_stmt -> . RETURN expresion
+
+    LLAVE_IZQ       shift and go to state 45
+    IDENTIFICADOR   shift and go to state 12
+    IF              shift and go to state 13
+    WHILE           shift and go to state 14
+    FOR             shift and go to state 15
+    DEF             shift and go to state 16
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    PARENTESIS_IZQ  shift and go to state 17
+    PRINT           shift and go to state 20
+    RETURN          shift and go to state 21
+
+    expresion                      shift and go to state 9
+    bloque                         shift and go to state 61
+    declaracion                    shift and go to state 44
+    asignacion                     shift and go to state 4
+    if_stmt                        shift and go to state 5
+    while_stmt                     shift and go to state 6
+    for_stmt                       shift and go to state 7
+    funcion_def                    shift and go to state 8
+    print_stmt                     shift and go to state 10
+    return_stmt                    shift and go to state 11
+
+state 57
+
+    (22) bloque -> LLAVE_IZQ declaraciones LLAVE_DER .
+
+    ELSE            reduce using rule 22 (bloque -> LLAVE_IZQ declaraciones LLAVE_DER .)
+    IDENTIFICADOR   reduce using rule 22 (bloque -> LLAVE_IZQ declaraciones LLAVE_DER .)
+    IF              reduce using rule 22 (bloque -> LLAVE_IZQ declaraciones LLAVE_DER .)
+    WHILE           reduce using rule 22 (bloque -> LLAVE_IZQ declaraciones LLAVE_DER .)
+    FOR             reduce using rule 22 (bloque -> LLAVE_IZQ declaraciones LLAVE_DER .)
+    DEF             reduce using rule 22 (bloque -> LLAVE_IZQ declaraciones LLAVE_DER .)
+    NUMERO          reduce using rule 22 (bloque -> LLAVE_IZQ declaraciones LLAVE_DER .)
+    CADENA          reduce using rule 22 (bloque -> LLAVE_IZQ declaraciones LLAVE_DER .)
+    PARENTESIS_IZQ  reduce using rule 22 (bloque -> LLAVE_IZQ declaraciones LLAVE_DER .)
+    PRINT           reduce using rule 22 (bloque -> LLAVE_IZQ declaraciones LLAVE_DER .)
+    RETURN          reduce using rule 22 (bloque -> LLAVE_IZQ declaraciones LLAVE_DER .)
+    $end            reduce using rule 22 (bloque -> LLAVE_IZQ declaraciones LLAVE_DER .)
+    LLAVE_DER       reduce using rule 22 (bloque -> LLAVE_IZQ declaraciones LLAVE_DER .)
+
+
+state 58
+
+    (16) for_stmt -> FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque .
+
+    IDENTIFICADOR   reduce using rule 16 (for_stmt -> FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque .)
+    IF              reduce using rule 16 (for_stmt -> FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque .)
+    WHILE           reduce using rule 16 (for_stmt -> FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque .)
+    FOR             reduce using rule 16 (for_stmt -> FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque .)
+    DEF             reduce using rule 16 (for_stmt -> FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque .)
+    NUMERO          reduce using rule 16 (for_stmt -> FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque .)
+    CADENA          reduce using rule 16 (for_stmt -> FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque .)
+    PARENTESIS_IZQ  reduce using rule 16 (for_stmt -> FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque .)
+    PRINT           reduce using rule 16 (for_stmt -> FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque .)
+    RETURN          reduce using rule 16 (for_stmt -> FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque .)
+    $end            reduce using rule 16 (for_stmt -> FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque .)
+    ELSE            reduce using rule 16 (for_stmt -> FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque .)
+    LLAVE_DER       reduce using rule 16 (for_stmt -> FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque .)
+
+
+state 59
+
+    (17) funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS . bloque
+    (21) bloque -> . declaracion
+    (22) bloque -> . LLAVE_IZQ declaraciones LLAVE_DER
+    (4) declaracion -> . asignacion
+    (5) declaracion -> . if_stmt
+    (6) declaracion -> . while_stmt
+    (7) declaracion -> . for_stmt
+    (8) declaracion -> . funcion_def
+    (9) declaracion -> . expresion
+    (10) declaracion -> . print_stmt
+    (11) declaracion -> . return_stmt
+    (12) asignacion -> . IDENTIFICADOR OPERADOR_ASIGNACION expresion
+    (13) if_stmt -> . IF expresion DOS_PUNTOS bloque
+    (14) if_stmt -> . IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque
+    (15) while_stmt -> . WHILE expresion DOS_PUNTOS bloque
+    (16) for_stmt -> . FOR IDENTIFICADOR IN expresion DOS_PUNTOS bloque
+    (17) funcion_def -> . DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque
+    (23) expresion -> . NUMERO
+    (24) expresion -> . CADENA
+    (25) expresion -> . IDENTIFICADOR
+    (26) expresion -> . expresion OPERADOR_ARITMETICO expresion
+    (27) expresion -> . expresion OPERADOR_COMPARACION expresion
+    (28) expresion -> . PARENTESIS_IZQ expresion PARENTESIS_DER
+    (29) print_stmt -> . PRINT PARENTESIS_IZQ expresion PARENTESIS_DER
+    (30) return_stmt -> . RETURN expresion
+
+    LLAVE_IZQ       shift and go to state 45
+    IDENTIFICADOR   shift and go to state 12
+    IF              shift and go to state 13
+    WHILE           shift and go to state 14
+    FOR             shift and go to state 15
+    DEF             shift and go to state 16
+    NUMERO          shift and go to state 18
+    CADENA          shift and go to state 19
+    PARENTESIS_IZQ  shift and go to state 17
+    PRINT           shift and go to state 20
+    RETURN          shift and go to state 21
+
+    bloque                         shift and go to state 62
+    declaracion                    shift and go to state 44
+    asignacion                     shift and go to state 4
+    if_stmt                        shift and go to state 5
+    while_stmt                     shift and go to state 6
+    for_stmt                       shift and go to state 7
+    funcion_def                    shift and go to state 8
+    expresion                      shift and go to state 9
+    print_stmt                     shift and go to state 10
+    return_stmt                    shift and go to state 11
+
+state 60
+
+    (19) parametros -> parametros COMA IDENTIFICADOR .
+
+    PARENTESIS_DER  reduce using rule 19 (parametros -> parametros COMA IDENTIFICADOR .)
+    COMA            reduce using rule 19 (parametros -> parametros COMA IDENTIFICADOR .)
+
+
+state 61
+
+    (14) if_stmt -> IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque .
+
+    IDENTIFICADOR   reduce using rule 14 (if_stmt -> IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque .)
+    IF              reduce using rule 14 (if_stmt -> IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque .)
+    WHILE           reduce using rule 14 (if_stmt -> IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque .)
+    FOR             reduce using rule 14 (if_stmt -> IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque .)
+    DEF             reduce using rule 14 (if_stmt -> IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque .)
+    NUMERO          reduce using rule 14 (if_stmt -> IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque .)
+    CADENA          reduce using rule 14 (if_stmt -> IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque .)
+    PARENTESIS_IZQ  reduce using rule 14 (if_stmt -> IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque .)
+    PRINT           reduce using rule 14 (if_stmt -> IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque .)
+    RETURN          reduce using rule 14 (if_stmt -> IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque .)
+    $end            reduce using rule 14 (if_stmt -> IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque .)
+    ELSE            reduce using rule 14 (if_stmt -> IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque .)
+    LLAVE_DER       reduce using rule 14 (if_stmt -> IF expresion DOS_PUNTOS bloque ELSE DOS_PUNTOS bloque .)
+
+
+state 62
+
+    (17) funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque .
+
+    IDENTIFICADOR   reduce using rule 17 (funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque .)
+    IF              reduce using rule 17 (funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque .)
+    WHILE           reduce using rule 17 (funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque .)
+    FOR             reduce using rule 17 (funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque .)
+    DEF             reduce using rule 17 (funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque .)
+    NUMERO          reduce using rule 17 (funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque .)
+    CADENA          reduce using rule 17 (funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque .)
+    PARENTESIS_IZQ  reduce using rule 17 (funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque .)
+    PRINT           reduce using rule 17 (funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque .)
+    RETURN          reduce using rule 17 (funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque .)
+    $end            reduce using rule 17 (funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque .)
+    ELSE            reduce using rule 17 (funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque .)
+    LLAVE_DER       reduce using rule 17 (funcion_def -> DEF IDENTIFICADOR PARENTESIS_IZQ parametros PARENTESIS_DER DOS_PUNTOS bloque .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for OPERADOR_ARITMETICO in state 34 resolved as shift
+WARNING: shift/reduce conflict for OPERADOR_COMPARACION in state 34 resolved as shift
+WARNING: shift/reduce conflict for OPERADOR_ARITMETICO in state 35 resolved as shift
+WARNING: shift/reduce conflict for OPERADOR_COMPARACION in state 35 resolved as shift
+WARNING: shift/reduce conflict for ELSE in state 43 resolved as shift
