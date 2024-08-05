@@ -5,8 +5,6 @@ __pycache__/
 assets/external/
 env
 __init__.py
-requirements.txt
-rxconfig.py
 assets
 titulo
 experimento
