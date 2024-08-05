@@ -1,6 +1,8 @@
 import reflex as rx
 from enum import Enum, auto
 import re
+import json
+import os
 
 class TipoToken(Enum):
     """Enumeración de los tipos de tokens soportados."""
@@ -42,9 +44,9 @@ class AnalizadorLexico:
         self.tokens = []
         self.linea_actual = 1
         self.columna_actual = 1
-        self.contexto = []
 
     def analizar(self):
+        self.tokens = []  # Reiniciamos la lista de tokens
         patrones = [
             (TipoToken.ESPACIO, r'\s+'),
             (TipoToken.COMENTARIO, r'#.*'),
@@ -104,19 +106,63 @@ def calcular(x, y):
 total = calcular(5, 7)
 """
     resultado: list = []
+    archivo_subido: str = ""
+    debug_info: str = ""
 
     def analizar(self):
-        analizador = AnalizadorLexico(self.codigo)
+        codigo_a_analizar = self.archivo_subido if self.archivo_subido else self.codigo
+        self.debug_info += f"\nCódigo a analizar:\n{codigo_a_analizar[:500]}..."
+        analizador = AnalizadorLexico(codigo_a_analizar)
         try:
             tokens = analizador.analizar()
             self.resultado = [str(token) for token in tokens]
+            self.debug_info += f"\nAnálisis completado. Tokens encontrados: {len(self.resultado)}"
         except ErrorLexico as e:
             self.resultado = [f"Error léxico: {e}"]
+            self.debug_info += f"\nError léxico durante el análisis: {str(e)}"
+        except Exception as e:
+            self.resultado = [f"Error inesperado: {str(e)}"]
+            self.debug_info += f"\nError inesperado durante el análisis: {str(e)}"
+
+    def handle_upload(self, files: list[dict]):
+        """Maneja la carga de archivos."""
+        self.debug_info = f"Recibido: {json.dumps(files, indent=2)}"
+        if files and len(files) > 0:
+            file_data = files[0]
+            self.debug_info += f"\nPrimer archivo: {json.dumps(file_data, indent=2)}"
+            
+            if 'path' in file_data:
+                file_path = file_data['path']
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as file:
+                        file_content = file.read()
+                    self.archivo_subido = file_content
+                    self.codigo = file_content
+                    self.debug_info += f"\nArchivo leído con éxito: {file_path}"
+                    self.debug_info += f"\nContenido del archivo:\n{file_content[:500]}..."
+                    self.analizar()
+                except Exception as e:
+                    self.debug_info += f"\nError al leer el archivo: {str(e)}"
+            else:
+                self.debug_info += "\nEstructura de archivo no reconocida."
+        else:
+            self.archivo_subido = ""
+            self.debug_info += "\nNo se recibieron archivos."
 
 def index():
     return rx.container(
         rx.vstack(
             rx.heading("Analizador Léxico", size="lg"),
+            rx.upload(
+                rx.text("Arrastra y suelta un archivo aquí o haz clic para seleccionar"),
+                border="1px dashed",
+                padding="20px",
+                border_radius="md",
+                multiple=False,
+                accept={".txt": "text/plain", ".py": "text/x-python"},
+                max_files=1,
+                on_drop=State.handle_upload,
+            ),
             rx.text_area(
                 value=State.codigo,
                 on_change=State.set_codigo,
@@ -150,6 +196,3 @@ def index():
 
 app = rx.App()
 app.add_page(index)
-
-if __name__ == "__main__":
-    app.compile()
