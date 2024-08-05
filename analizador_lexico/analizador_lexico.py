@@ -222,6 +222,15 @@ total = calcular(5, 7)
             self.resultado = [f"Error inesperado: {str(e)}"]
             self.debug_info += f"\nError inesperado durante el análisis: {str(e)}"
 
+    def limpiar_resultado(self):
+        self.resultado = []
+        self.debug_info = ""
+        self.lenguaje_detectado = ""
+
+    def limpiar_codigo(self):
+        self.codigo = ""
+        self.archivo_subido = ""
+
     def handle_upload(self, files: list[dict]):
         """Maneja la carga de archivos."""
         self.debug_info = f"Recibido: {json.dumps(files, indent=2)}"
@@ -274,7 +283,13 @@ def index():
                 height="200px",
                 width="100%",
             ),
-            rx.button("Analizar", on_click=State.analizar),
+            rx.hstack(
+                rx.button("Analizar", on_click=State.analizar),
+                rx.button("Limpiar Resultado", on_click=State.limpiar_resultado),
+                rx.button("Limpiar Código", on_click=State.limpiar_codigo),
+                width="100%",
+                justify="space-between",
+            ),
             rx.divider(),
             rx.heading("Lenguaje Detectado", size="md"),
             rx.text(State.lenguaje_detectado),
