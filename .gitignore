@@ -1,12 +1,12 @@
 *.db
 *.py[cod]
 .web
+__init__.py
 __pycache__/
+assets
 assets/external/
 env
-__init__.py
+experimento
 requirements.txt
 rxconfig.py
-assets
 titulo
-experimento
