@@ -1,17 +1,7 @@
-#TODO
-# - Hacer que la logica este en distintos componentes
-# - mejorar la traduccion de javascript
-# - hacer que pueda convertirse de uno a otro
-# - Mejorar Analisis sintactico
-# - Creacion de arbol, de forma visual
-
-import sys
-import os
-from PyQt6.QtWidgets import QApplication, QMainWindow, QTextEdit, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QFileDialog, QLabel
-from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt
+import reflex as rx
 import ply.lex as lex
 import ply.yacc as yacc
+from anytree import Node, RenderTree
 
 # Definición del analizador léxico
 tokens = (
@@ -63,7 +53,6 @@ def t_newline(t):
 
 t_ignore = ' \t'
 
-# Manejo de indentación
 def t_INDENT(t):
     r'^[ \t]+'
     if t.lexer.at_line_start and t.lexer.paren_count == 0:
@@ -93,7 +82,7 @@ lexer.at_line_start = True
 # Definición del analizador sintáctico
 def p_program(p):
     '''program : statement_list'''
-    p[0] = p[1]
+    p[0] = ('program', p[1])
 
 def p_statement_list(p):
     '''statement_list : statement
@@ -113,7 +102,8 @@ def p_simple_statement(p):
     '''simple_statement : assignment
                         | function_call
                         | return_statement
-                        | print_statement'''
+                        | print_statement
+                        | expression'''
     p[0] = p[1]
 
 def p_compound_statement(p):
@@ -239,125 +229,165 @@ def p_error(p):
 # Construir el parser
 parser = yacc.yacc()
 
-class CodeAnalyzerGUI(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.initUI()
-
-    def initUI(self):
-        self.setWindowTitle('Analizador y Traductor de Código')
-        self.setGeometry(100, 100, 1000, 800)
-
-        main_widget = QWidget()
-        main_layout = QVBoxLayout()
-
-        # Área de texto para mostrar el código
-        self.code_edit = QTextEdit()
-        main_layout.addWidget(QLabel('Código Python:'))
-        main_layout.addWidget(self.code_edit)
-
-        # Botones
-        button_layout = QHBoxLayout()
-        self.load_button = QPushButton('Cargar Archivo')
-        self.load_button.clicked.connect(self.load_file)
-        self.analyze_button = QPushButton('Analizar')
-        self.analyze_button.clicked.connect(self.analyze_code)
-        button_layout.addWidget(self.load_button)
-        button_layout.addWidget(self.analyze_button)
-        main_layout.addLayout(button_layout)
-
-        # Área de texto para mostrar el análisis léxico
-        self.lexical_output = QTextEdit()
-        self.lexical_output.setReadOnly(True)
-        main_layout.addWidget(QLabel('Análisis Léxico:'))
-        main_layout.addWidget(self.lexical_output)
-
-        # Área de texto para mostrar el análisis sintáctico
-        self.syntax_output = QTextEdit()
-        self.syntax_output.setReadOnly(True)
-        main_layout.addWidget(QLabel('Análisis Sintáctico:'))
-        main_layout.addWidget(self.syntax_output)
-
-        # Área de texto para mostrar la traducción a JavaScript
-        self.js_output = QTextEdit()
-        self.js_output.setReadOnly(True)
-        main_layout.addWidget(QLabel('Traducción a JavaScript:'))
-        main_layout.addWidget(self.js_output)
-
-        main_widget.setLayout(main_layout)
-        self.setCentralWidget(main_widget)
-
-    def load_file(self):
-        file_name, _ = QFileDialog.getOpenFileName(self, 'Abrir archivo', '', 'Archivos de texto (*.txt)')
-        if file_name:
-            with open(file_name, 'r') as file:
-                self.code_edit.setPlainText(file.read())
+class State(rx.State):
+    python_code: str = ""
+    lexical_output: str = ""
+    syntax_output: str = ""
+    cpp_output: str = ""
+    tree_image: str = ""
 
     def analyze_code(self):
-        code = self.code_edit.toPlainText()
-        
         # Análisis léxico
-        lexer.input(code)
-        lex_output = "Línea | Tipo de Token | Valor\n" + "-" * 40 + "\n"
+        lexer.input(self.python_code)
+        self.lexical_output = "Línea | Tipo de Token | Valor\n" + "-" * 40 + "\n"
         for tok in lexer:
-            lex_output += f"{tok.lineno:5d} | {tok.type:13s} | {tok.value}\n"
-        self.lexical_output.setPlainText(lex_output)
+            self.lexical_output += f"{tok.lineno:5d} | {tok.type:13s} | {tok.value}\n"
 
         # Análisis sintáctico
         try:
-            result = parser.parse(code, lexer=lexer)
-            self.syntax_output.setPlainText(str(result))
+            result = parser.parse(self.python_code, lexer=lexer)
+            self.syntax_output = self.pretty_print_ast(result)
+            
+            # Generar árbol visual
+            root = self.build_tree(result)
+            self.generate_tree_image(root)
         except Exception as e:
-            self.syntax_output.setPlainText(f"Error en el análisis sintáctico: {str(e)}")
+            import traceback
+            self.syntax_output = f"Error en el análisis sintáctico: {str(e)}\n\n"
+            self.syntax_output += traceback.format_exc()
+            self.tree_image = ""
 
-        # Traducción a JavaScript
-        js_code = self.translate_to_js(code)
-        self.js_output.setPlainText(js_code)
+        # Traducción a C++
+        self.cpp_output = self.translate_to_cpp(self.python_code)
 
-    def translate_to_js(self, python_code):
-        js_code = ""
+    def build_tree(self, ast, parent=None):
+        if ast is None:
+            return Node("None", parent=parent)
+        
+        if isinstance(ast, (str, int, float)):
+            return Node(str(ast), parent=parent)
+        
+        if isinstance(ast, tuple):
+            node = Node(str(ast[0]), parent=parent)
+            for child in ast[1:]:
+                self.build_tree(child, node)
+            return node
+        
+        if isinstance(ast, list):
+            node = Node("program" if parent is None else "block", parent=parent)
+            for item in ast:
+                self.build_tree(item, node)
+            return node
+        
+        # Para cualquier otro tipo de objeto, convertimos a string
+        return Node(str(ast), parent=parent)
+
+    def generate_tree_image(self, root):
+        tree_str = ""
+        for pre, _, node in RenderTree(root):
+            tree_str += f"{pre}{node.name}\n"
+        self.tree_image = tree_str
+
+    def pretty_print_ast(self, ast, indent=0):
+        if isinstance(ast, tuple):
+            return "  " * indent + f"{ast[0]}:\n" + "\n".join(self.pretty_print_ast(x, indent + 1) for x in ast[1:])
+        elif isinstance(ast, list):
+            return "\n".join(self.pretty_print_ast(x, indent) for x in ast)
+        else:
+            return "  " * indent + str(ast)
+
+    def translate_to_cpp(self, python_code):
+        cpp_code = "#include <iostream>\n#include <string>\n\nusing namespace std;\n\n"
         lines = python_code.split('\n')
         indent_level = 0
+        in_function = False
         
         for line in lines:
             stripped_line = line.strip()
             
             # Ignorar líneas vacías y comentarios
             if not stripped_line or stripped_line.startswith('#'):
-                js_code += line + '\n'
+                cpp_code += '//' + line[1:] + '\n' if stripped_line.startswith('#') else '\n'
                 continue
             
             # Manejar indentación
             if stripped_line.startswith(('if', 'else', 'for', 'while', 'def')):
-                js_code += '  ' * indent_level + self.translate_line(stripped_line) + ' {\n'
+                cpp_code += '  ' * indent_level + self.translate_line(stripped_line) + ' {\n'
                 indent_level += 1
+                if stripped_line.startswith('def'):
+                    in_function = True
             elif stripped_line.startswith(('return', 'print')):
-                js_code += '  ' * indent_level + self.translate_line(stripped_line) + ';\n'
+                cpp_code += '  ' * indent_level + self.translate_line(stripped_line) + ';\n'
             else:
-                js_code += '  ' * indent_level + self.translate_line(stripped_line) + ';\n'
+                cpp_code += '  ' * indent_level + self.translate_line(stripped_line) + ';\n'
             
             # Reducir indentación después de bloques
             if indent_level > 0 and len(line) - len(line.lstrip()) < 4 * indent_level:
                 indent_level -= 1
-                js_code += '  ' * indent_level + '}\n'
+                cpp_code += '  ' * indent_level + '}\n'
+                if in_function and indent_level == 0:
+                    in_function = False
+                    cpp_code += '\n'
         
-        return js_code
+        # Agregar la función main() si no está presente
+        if 'int main()' not in cpp_code:
+            cpp_code += '\nint main() {\n    // Coloca aquí el código principal\n    return 0;\n}\n'
+        
+        return cpp_code
 
     def translate_line(self, line):
-        # Traducir palabras clave de Python a JavaScript
-        line = line.replace('def ', 'function ')
+        # Traducir palabras clave de Python a C++
+        line = line.replace('def ', 'auto ')
         line = line.replace('elif ', 'else if ')
         line = line.replace(':', '')
-        line = line.replace('print(', 'console.log(')
+        line = line.replace('print(', 'cout << ')
+        line = line.replace('True', 'true')
+        line = line.replace('False', 'false')
+        line = line.replace('None', 'nullptr')
+        
+        # Ajustar la función print
+        if 'cout <<' in line:
+            line = line.replace(')', ' << endl')
         
         # Traducir operadores de comparación
-        line = line.replace(' == ', ' === ')
-        line = line.replace(' != ', ' !== ')
+        line = line.replace(' and ', ' && ')
+        line = line.replace(' or ', ' || ')
+        line = line.replace('not ', '!')
+        
+        # Ajustar declaraciones de variables
+        if '=' in line and 'if' not in line and 'while' not in line:
+            parts = line.split('=')
+            if len(parts) == 2 and '=' not in parts[1]:
+                line = 'auto ' + line
         
         return line
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    ex = CodeAnalyzerGUI()
-    ex.show()
-    sys.exit(app.exec())
+def index():
+    return rx.container(
+        rx.vstack(
+            rx.heading("Analizador y Traductor de Código Python a C++"),
+            rx.text_area(
+                value=State.python_code,
+                placeholder="Ingrese su código Python aquí",
+                on_change=State.set_python_code,
+                height="200px",
+                width="100%",
+            ),
+            rx.button("Analizar y Traducir", on_click=State.analyze_code),
+            rx.divider(),
+            rx.heading("Análisis Léxico", size="md"),
+            rx.text_area(value=State.lexical_output, is_read_only=True, height="200px", width="100%"),
+            rx.heading("Análisis Sintáctico", size="md"),
+            rx.text_area(value=State.syntax_output, is_read_only=True, height="200px", width="100%"),
+            rx.heading("Árbol Sintáctico", size="md"),
+            rx.text(State.tree_image, font_family="monospace", white_space="pre-wrap"),
+            rx.heading("Código C++", size="md"),
+            rx.text_area(value=State.cpp_output, is_read_only=True, height="200px", width="100%"),
+            width="100%",
+            max_width="800px",
+            spacing="4",
+        )
+    )
+
+app = rx.App()
+app.add_page(index)

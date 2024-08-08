@@ -6,12 +6,12 @@ __pycache__/
 assets
 assets/external/
 env
-<<<<<<< HEAD
 experimento
 requirements.txt
 rxconfig.py
-=======
 __init__.py
 assets
->>>>>>> 44bc4fa6f61e84c2dd3f427159f2347fb8290006
 titulo
+parser.out
+parsetab.py
+.gpt-runner
