@@ -253,6 +253,14 @@ print("El factorial de 5 es:", result)
     tree_image: str = ""
     debug_output: str = ""
 
+    def clear_all(self):
+        self.python_code = ""
+        self.lexical_output = []
+        self.syntax_output = ""
+        self.js_output = ""
+        self.tree_image = ""
+        self.debug_output = ""
+
     def analyze_code(self):
         self.debug_output = "Iniciando análisis...\n"
 
@@ -493,7 +501,10 @@ def index():
                 height="200px",
                 width="100%",
             ),
-            rx.button("Analizar y Traducir", on_click=State.analyze_code),
+            rx.hstack(
+                rx.button("Analizar y Traducir", on_click=State.analyze_code),
+                rx.button("Limpiar", on_click=State.clear_all),
+            ),
             rx.divider(),
             rx.heading("Análisis Léxico", size="md"),
             custom_table(State.lexical_output),
