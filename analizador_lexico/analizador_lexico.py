@@ -5,6 +5,7 @@ from anytree import Node, RenderTree
 import re
 import sys
 import io
+from typing import List, Dict, Any
 
 # Definición del analizador léxico
 tokens = (
@@ -246,7 +247,7 @@ def factorial(n):
 result = factorial(5)
 print("El factorial de 5 es:", result)
 """
-    lexical_output: str = ""
+    lexical_output: List[Dict[str, str]] = []
     syntax_output: str = ""
     js_output: str = ""
     tree_image: str = ""
@@ -264,17 +265,18 @@ print("El factorial de 5 es:", result)
         try:
             # Análisis léxico
             lexer.input(self.python_code)
-            self.lexical_output = "Línea | Tipo de Token | Valor\n" + "-" * 40 + "\n"
-            tokens = []
-            for tok in lexer:
-                self.lexical_output += f"{tok.lineno:5d} | {tok.type:13s} | {tok.value}\n"
-                tokens.append(tok)
-            self.debug_output += f"Análisis léxico completado. Tokens encontrados: {len(tokens)}\n"
+            self.lexical_output = [
+            {
+                "linea": str(tok.lineno),
+                "tipo": str(tok.type),
+                "valor": str(tok.value)
+            }
+            for tok in lexer
+        ]
+            self.debug_output += f"Análisis léxico completado. Tokens encontrados: {len(self.lexical_output)}\n"
 
             # Análisis sintáctico
-            lexer.input(self.python_code)
-            result = parser.parse(self.python_code, debug=True)
-            
+            result = parser.parse(self.python_code)
             if result is not None:
                 self.syntax_output = self.pretty_print_ast(result)
                 self.debug_output += "AST generado con éxito.\n"
@@ -284,9 +286,6 @@ print("El factorial de 5 es:", result)
                 self.generate_tree_image(root)
             else:
                 self.syntax_output = "Error: No se pudo generar el AST."
-                self.debug_output += "El parser retornó None. Revisando los tokens:\n"
-                for tok in tokens:
-                    self.debug_output += f"  {tok.type}: {tok.value}\n"
                 self.tree_image = "No se pudo generar el árbol sintáctico."
 
             # Traducción a JavaScript
@@ -442,6 +441,36 @@ print("El factorial de 5 es:", result)
         
         return line
 
+# Componente de tabla personalizado
+def custom_table(data: rx.Var[List[Dict[str, str]]]):
+    return rx.vstack(
+        rx.hstack(
+            rx.box("Línea", font_weight="bold", width="20%"),
+            rx.box("Tipo de Token", font_weight="bold", width="40%"),
+            rx.box("Valor", font_weight="bold", width="40%"),
+            width="100%",
+            padding="0.5em",
+            border_bottom="1px solid #ccc",
+        ),
+        rx.vstack(
+            rx.foreach(
+                data,
+                lambda item: rx.hstack(
+                    rx.box(item["linea"], width="20%"),
+                    rx.box(item["tipo"], width="40%"),
+                    rx.box(item["valor"], width="40%"),
+                    width="100%",
+                    padding="0.5em",
+                    _hover={"background_color": "#f5f5f5"},
+                )
+            ),
+            width="100%",
+            border="1px solid #ccc",
+            border_radius="5px",
+        ),
+        width="100%",
+    )
+
 def index():
     return rx.container(
         rx.vstack(
@@ -456,7 +485,7 @@ def index():
             rx.button("Analizar y Traducir", on_click=State.analyze_code),
             rx.divider(),
             rx.heading("Análisis Léxico", size="md"),
-            rx.text_area(value=State.lexical_output, is_read_only=True, height="200px", width="100%"),
+            custom_table(State.lexical_output),
             rx.heading("Análisis Sintáctico", size="md"),
             rx.text_area(value=State.syntax_output, is_read_only=True, height="200px", width="100%"),
             rx.heading("Árbol Sintáctico", size="md"),
