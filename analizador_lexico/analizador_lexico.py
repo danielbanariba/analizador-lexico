@@ -441,7 +441,6 @@ print("El factorial de 5 es:", result)
         
         return line
 
-# Componente de tabla personalizado
 def custom_table(data: rx.Var[List[Dict[str, str]]]):
     return rx.vstack(
         rx.hstack(
@@ -450,7 +449,10 @@ def custom_table(data: rx.Var[List[Dict[str, str]]]):
             rx.box("Valor", font_weight="bold", width="40%"),
             width="100%",
             padding="0.5em",
-            border_bottom="1px solid #ccc",
+            bg="gray.100",
+            position="sticky",
+            top="0",
+            z_index="1",
         ),
         rx.vstack(
             rx.foreach(
@@ -461,14 +463,16 @@ def custom_table(data: rx.Var[List[Dict[str, str]]]):
                     rx.box(item["valor"], width="40%"),
                     width="100%",
                     padding="0.5em",
-                    _hover={"background_color": "#f5f5f5"},
+                    _hover={"bg": "gray.50"},
                 )
             ),
             width="100%",
-            border="1px solid #ccc",
-            border_radius="5px",
         ),
+        height="200px",
         width="100%",
+        overflow_y="auto",
+        border="1px solid #ccc",
+        border_radius="5px",
     )
 
 def index():
@@ -489,7 +493,7 @@ def index():
             rx.heading("Análisis Sintáctico", size="md"),
             rx.text_area(value=State.syntax_output, is_read_only=True, height="200px", width="100%"),
             rx.heading("Árbol Sintáctico", size="md"),
-            rx.text(State.tree_image, font_family="monospace", white_space="pre-wrap"),
+            rx.text_area(value=State.tree_image, is_read_only=True, height="200px", width="100%", font_family="monospace", white_space="pre-wrap"),
             rx.heading("Código JavaScript", size="md"),
             rx.text_area(value=State.js_output, is_read_only=True, height="200px", width="100%"),
             rx.heading("Información de Depuración", size="md"),
