@@ -11,7 +11,7 @@ tokens = (
     'NUMBER', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'LPAREN', 'RPAREN',
     'ID', 'EQUALS', 'COLON', 'COMMA', 'STRING', 'INDENT', 'DEDENT',
     'IF', 'ELSE', 'WHILE', 'FOR', 'IN', 'DEF', 'RETURN', 'PRINT',
-    'GT', 'LT', 'GE', 'LE', 'EQ', 'NE', 'COMMENT'
+    'GT', 'LT', 'GE', 'LE', 'EQ', 'NE', 'COMMENT', 'NEWLINE'
 )
 
 t_PLUS = r'\+'
@@ -48,27 +48,34 @@ def t_ID(t):
 
 def t_COMMENT(t):
     r'\#.*'
-    return t
+    pass  # Ignorar comentarios
 
-def t_newline(t):
+def t_NEWLINE(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
+    t.lexer.at_line_start = True
+    return t
 
 t_ignore = ' \t'
 
 def t_INDENT(t):
     r'^[ \t]+'
-    if t.lexer.at_line_start and t.lexer.paren_count == 0:
-        t.value = len(t.value.replace("\t", " "*4))
-        if t.value > t.lexer.indent_stack[-1]:
+    if t.lexer.at_line_start:
+        depth = len(t.value.replace("\t", " " * 4))
+        if depth > t.lexer.indent_stack[-1]:
             t.type = "INDENT"
-            t.lexer.indent_stack.append(t.value)
-        elif t.value < t.lexer.indent_stack[-1]:
+            t.lexer.indent_stack.append(depth)
+        elif depth < t.lexer.indent_stack[-1]:
             t.type = "DEDENT"
-            t.lexer.indent_stack.pop()
+            while depth < t.lexer.indent_stack[-1]:
+                t.lexer.indent_stack.pop()
+                t.lexer.emit('DEDENT', '')
+            if depth != t.lexer.indent_stack[-1]:
+                raise IndentationError("Indentation error")
         else:
             t.type = "IGNORE"
-        return t
+        return t if t.type != "IGNORE" else None
+    t.lexer.at_line_start = False
 
 def t_error(t):
     print(f"Illegal character '{t.value[0]}' at line {t.lexer.lineno}")
@@ -79,7 +86,6 @@ lexer = lex.lex()
 
 # Inicialización del lexer
 lexer.indent_stack = [0]
-lexer.paren_count = 0
 lexer.at_line_start = True
 
 # Definición del analizador sintáctico
@@ -97,43 +103,26 @@ def p_statement_list(p):
 
 def p_statement(p):
     '''statement : simple_statement
-                 | compound_statement
-                 | COMMENT'''
+                 | compound_statement'''
     p[0] = p[1]
 
 def p_simple_statement(p):
-    '''simple_statement : assignment
-                        | function_call
-                        | return_statement
-                        | print_statement
-                        | expression'''
+    '''simple_statement : assignment_statement NEWLINE
+                        | return_statement NEWLINE
+                        | print_statement NEWLINE
+                        | expression_statement NEWLINE'''
     p[0] = p[1]
 
 def p_compound_statement(p):
-    '''compound_statement : function_def
-                          | if_statement
+    '''compound_statement : if_statement
                           | while_statement
-                          | for_statement'''
+                          | for_statement
+                          | function_def'''
     p[0] = p[1]
 
-def p_assignment(p):
-    '''assignment : ID EQUALS expression'''
+def p_assignment_statement(p):
+    '''assignment_statement : ID EQUALS expression'''
     p[0] = ('assignment', p[1], p[3])
-
-def p_function_call(p):
-    '''function_call : ID LPAREN expression_list RPAREN'''
-    p[0] = ('function_call', p[1], p[3])
-
-def p_expression_list(p):
-    '''expression_list : expression
-                       | expression_list COMMA expression
-                       | '''
-    if len(p) == 1:
-        p[0] = []
-    elif len(p) == 2:
-        p[0] = [p[1]]
-    else:
-        p[0] = p[1] + [p[3]]
 
 def p_return_statement(p):
     '''return_statement : RETURN expression'''
@@ -143,9 +132,37 @@ def p_print_statement(p):
     '''print_statement : PRINT LPAREN expression_list RPAREN'''
     p[0] = ('print', p[3])
 
+def p_expression_statement(p):
+    '''expression_statement : expression'''
+    p[0] = ('expression_statement', p[1])
+
+def p_expression_list(p):
+    '''expression_list : expression
+                       | expression_list COMMA expression'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[3]]
+
+def p_if_statement(p):
+    '''if_statement : IF expression COLON NEWLINE INDENT statement_list DEDENT
+                    | IF expression COLON NEWLINE INDENT statement_list DEDENT ELSE COLON NEWLINE INDENT statement_list DEDENT'''
+    if len(p) == 8:
+        p[0] = ('if', p[2], p[6])
+    else:
+        p[0] = ('if-else', p[2], p[6], p[12])
+
+def p_while_statement(p):
+    '''while_statement : WHILE expression COLON NEWLINE INDENT statement_list DEDENT'''
+    p[0] = ('while', p[2], p[6])
+
+def p_for_statement(p):
+    '''for_statement : FOR ID IN expression COLON NEWLINE INDENT statement_list DEDENT'''
+    p[0] = ('for', p[2], p[4], p[8])
+
 def p_function_def(p):
-    '''function_def : DEF ID LPAREN parameter_list RPAREN COLON block'''
-    p[0] = ('function_def', p[2], p[4], p[7])
+    '''function_def : DEF ID LPAREN parameter_list RPAREN COLON NEWLINE INDENT statement_list DEDENT'''
+    p[0] = ('function_def', p[2], p[4], p[9])
 
 def p_parameter_list(p):
     '''parameter_list : ID
@@ -158,33 +175,9 @@ def p_parameter_list(p):
     else:
         p[0] = p[1] + [p[3]]
 
-def p_if_statement(p):
-    '''if_statement : IF expression COLON block
-                    | IF expression COLON block ELSE COLON block'''
-    if len(p) == 5:
-        p[0] = ('if', p[2], p[4])
-    else:
-        p[0] = ('if-else', p[2], p[4], p[7])
-
-def p_while_statement(p):
-    '''while_statement : WHILE expression COLON block'''
-    p[0] = ('while', p[2], p[4])
-
-def p_for_statement(p):
-    '''for_statement : FOR ID IN expression COLON block'''
-    p[0] = ('for', p[2], p[4], p[6])
-
-def p_block(p):
-    '''block : INDENT statement_list DEDENT'''
-    p[0] = p[2]
-
 def p_expression(p):
     '''expression : arithmetic_expr
-                  | comparison_expr
-                  | STRING
-                  | NUMBER
-                  | ID
-                  | function_call'''
+                  | comparison_expr'''
     p[0] = p[1]
 
 def p_arithmetic_expr(p):
@@ -208,32 +201,51 @@ def p_term(p):
 def p_factor(p):
     '''factor : LPAREN expression RPAREN
               | NUMBER
-              | ID'''
+              | STRING
+              | ID
+              | function_call'''
     if len(p) == 2:
         p[0] = p[1]
     else:
         p[0] = p[2]
 
+def p_function_call(p):
+    '''function_call : ID LPAREN expression_list RPAREN'''
+    p[0] = ('function_call', p[1], p[3])
+
 def p_comparison_expr(p):
-    '''comparison_expr : arithmetic_expr GT arithmetic_expr
-                       | arithmetic_expr LT arithmetic_expr
-                       | arithmetic_expr GE arithmetic_expr
-                       | arithmetic_expr LE arithmetic_expr
-                       | arithmetic_expr EQ arithmetic_expr
-                       | arithmetic_expr NE arithmetic_expr'''
+    '''comparison_expr : arithmetic_expr comparison_op arithmetic_expr'''
     p[0] = (p[2], p[1], p[3])
+
+def p_comparison_op(p):
+    '''comparison_op : EQ
+                     | NE
+                     | LT
+                     | LE
+                     | GT
+                     | GE'''
+    p[0] = p[1]
 
 def p_error(p):
     if p:
-        print(f"Error de sintaxis en la entrada en el token '{p.value}', línea {p.lineno}, posición {p.lexpos}")
+        print(f"Syntax error at '{p.value}', line {p.lineno}")
     else:
-        print("Error de sintaxis en la entrada al final del archivo")
+        print("Syntax error at EOF")
 
-# Construir el parser con modo de depuración
-parser = yacc.yacc(debug=True, write_tables=False)
+# Construir el parser
+parser = yacc.yacc()
 
 class State(rx.State):
-    python_code: str = ""
+    python_code: str = """
+def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+result = factorial(5)
+print("El factorial de 5 es:", result)
+"""
     lexical_output: str = ""
     syntax_output: str = ""
     js_output: str = ""
@@ -429,7 +441,6 @@ class State(rx.State):
                 return "else"
         
         return line
-
 
 def index():
     return rx.container(
