@@ -9,12 +9,13 @@ from typing import List, Dict, Any
 
 # Definición del analizador léxico
 tokens = (
-    'NUMBER', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'LPAREN', 'RPAREN',
+    'NUMBER', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MODULO', 'LPAREN', 'RPAREN',
     'ID', 'EQUALS', 'COLON', 'COMMA', 'STRING', 'INDENT', 'DEDENT',
     'IF', 'ELSE', 'WHILE', 'FOR', 'IN', 'DEF', 'RETURN', 'PRINT',
     'GT', 'LT', 'GE', 'LE', 'EQ', 'NE', 'COMMENT', 'NEWLINE'
 )
 
+t_MODULO = r'%'
 t_PLUS = r'\+'
 t_MINUS = r'-'
 t_TIMES = r'\*'
@@ -91,8 +92,13 @@ lexer.at_line_start = True
 
 # Definición del analizador sintáctico
 def p_program(p):
-    '''program : statement_list'''
+    '''program : statement_list
+               | empty'''
     p[0] = ('program', p[1])
+    
+def p_empty(p):
+    'empty :'
+    pass
 
 def p_statement_list(p):
     '''statement_list : statement
@@ -237,9 +243,11 @@ def p_comparison_op(p):
     p[0] = p[1]
 
 def p_error(p):
-    parser.error += 1
     if p:
-        print(f"Syntax error at '{p.value}', line {p.lineno}")
+        print(f"Syntax error at token {p.type}")
+        print(f"Line: {p.lineno}")
+        print(f"Position: {p.lexpos}")
+        print(f"Value: {p.value}")
     else:
         print("Syntax error at EOF")
 
