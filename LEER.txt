@@ -1,5 +1,0 @@
-LO QUE FALTA EN EL PROYECTO
-
-1) Convertir de un lenguaje a otro (Ejemplo, python a c++)
-2) Indentificar los toquen por columnas y no por mensaje como lo tengo 
-3) generar un arbol semantico 

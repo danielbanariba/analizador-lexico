@@ -13,3 +13,4 @@ parsetab.py
 requirements.txt
 rxconfig.py
 titulo
+__pycache__

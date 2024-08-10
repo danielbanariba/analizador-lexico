@@ -130,8 +130,12 @@ def p_return_statement(p):
     p[0] = ('return', p[2])
 
 def p_print_statement(p):
-    '''print_statement : PRINT LPAREN expression_list RPAREN'''
-    p[0] = ('print', p[3])
+    '''print_statement : PRINT LPAREN expression_list RPAREN
+                       | PRINT LPAREN RPAREN'''
+    if len(p) == 5:
+        p[0] = ('print', p[3])
+    else:
+        p[0] = ('print', [])
 
 def p_expression_statement(p):
     '''expression_statement : expression'''
@@ -139,11 +143,16 @@ def p_expression_statement(p):
 
 def p_expression_list(p):
     '''expression_list : expression
-                       | expression_list COMMA expression'''
+                       | expression_list COMMA expression
+                       | STRING
+                       | expression_list COMMA STRING'''
     if len(p) == 2:
         p[0] = [p[1]]
-    else:
-        p[0] = p[1] + [p[3]]
+    elif len(p) == 4:
+        if isinstance(p[1], list):
+            p[0] = p[1] + [p[3]]
+        else:
+            p[0] = [p[1], p[3]]
 
 def p_if_statement(p):
     '''if_statement : IF expression COLON NEWLINE INDENT statement_list DEDENT
@@ -228,13 +237,15 @@ def p_comparison_op(p):
     p[0] = p[1]
 
 def p_error(p):
+    parser.error += 1
     if p:
         print(f"Syntax error at '{p.value}', line {p.lineno}")
     else:
         print("Syntax error at EOF")
 
-# Construir el parser
-parser = yacc.yacc()
+# Construir el parser con modo de depuración
+parser = yacc.yacc(debug=True)
+parser.error = 0
 
 class State(rx.State):
     python_code: str = """
@@ -274,17 +285,19 @@ print("El factorial de 5 es:", result)
             # Análisis léxico
             lexer.input(self.python_code)
             self.lexical_output = [
-            {
-                "linea": str(tok.lineno),
-                "tipo": str(tok.type),
-                "valor": str(tok.value)
-            }
-            for tok in lexer
-        ]
+                {
+                    "linea": str(tok.lineno),
+                    "tipo": str(tok.type),
+                    "valor": str(tok.value)
+                }
+                for tok in lexer
+            ]
             self.debug_output += f"Análisis léxico completado. Tokens encontrados: {len(self.lexical_output)}\n"
+            self.debug_output += "Tokens:\n" + "\n".join(str(tok) for tok in self.lexical_output) + "\n"
 
             # Análisis sintáctico
-            result = parser.parse(self.python_code)
+            parser.error = 0  # Reiniciar contador de errores
+            result = parser.parse(self.python_code, debug=True)  # Activar modo de depuración
             if result is not None:
                 self.syntax_output = self.pretty_print_ast(result)
                 self.debug_output += "AST generado con éxito.\n"
@@ -295,6 +308,7 @@ print("El factorial de 5 es:", result)
             else:
                 self.syntax_output = "Error: No se pudo generar el AST."
                 self.tree_image = "No se pudo generar el árbol sintáctico."
+                self.debug_output += f"Error en el análisis sintáctico. Número de errores: {parser.error}\n"
 
             # Traducción a JavaScript
             self.js_output = self.translate_to_js(self.python_code)
@@ -399,7 +413,6 @@ print("El factorial de 5 es:", result)
         line = line.replace('def ', 'function ')
         line = line.replace('elif ', 'else if ')
         line = line.replace(':', '')
-        line = line.replace('print(', 'console.log(')
         line = line.replace('True', 'true')
         line = line.replace('False', 'false')
         line = line.replace(' and ', ' && ')
@@ -410,6 +423,11 @@ print("El factorial de 5 es:", result)
         line = line.replace(' == ', ' === ')
         line = line.replace(' != ', ' !== ')
         line = line.replace(' // ', ' / ')  # Integer division in JS
+        
+        # Modificar la traducción de print
+        if line.strip().startswith('print('):
+            content = line.strip()[6:-1]  # Eliminar 'print(' y ')'
+            return f"console.log({content})"
         
         # Manejo de bucles for
         if line.startswith('for ') and 'range' in line:
