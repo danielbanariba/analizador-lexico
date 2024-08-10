@@ -1,5 +1,6 @@
 *.db
 *.py[cod]
+.gpt-runner
 .web
 __init__.py
 __pycache__/
@@ -7,11 +8,8 @@ assets
 assets/external/
 env
 experimento
-requirements.txt
-rxconfig.py
-__init__.py
-assets
-titulo
 parser.out
 parsetab.py
-.gpt-runner
+requirements.txt
+rxconfig.py
+titulo
