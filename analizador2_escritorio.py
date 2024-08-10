@@ -1,6 +1,8 @@
 import sys
 import re
 import os
+from tabulate import tabulate
+from PyQt6.QtWidgets import QTableWidget, QTableWidgetItem
 from PyQt6.QtWidgets import QApplication, QMainWindow, QTextEdit, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QFileDialog, QLabel, QMessageBox
 import ply.lex as lex
 import ply.yacc as yacc
@@ -8,6 +10,7 @@ from anytree import Node, RenderTree
 from anytree.exporter import DotExporter
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QMessageBox
+from PyQt6.QtWidgets import QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTextEdit, QMainWindow, QWidget
 from PyQt6.QtCore import Qt
 
 # Definición del analizador léxico
@@ -313,9 +316,8 @@ class CodeAnalyzerGUI(QMainWindow):
         button_layout.addWidget(self.visualize_button)
         main_layout.addLayout(button_layout)
 
-        # Área de texto para mostrar el análisis léxico
-        self.lexical_output = QTextEdit()
-        self.lexical_output.setReadOnly(True)
+        # Tabla para mostrar el análisis léxico
+        self.lexical_output = QTableWidget()
         main_layout.addWidget(QLabel('Análisis Léxico:'))
         main_layout.addWidget(self.lexical_output)
 
@@ -359,7 +361,6 @@ class CodeAnalyzerGUI(QMainWindow):
             return result
         else:
             return "  " * level + f"{node}\n"
-
     def analyze_code(self):
         code = self.code_edit.toPlainText()
         
@@ -372,21 +373,37 @@ class CodeAnalyzerGUI(QMainWindow):
         lexer.at_line_start = True
         lexer.input(code)
         
+        # Configurar la tabla
+        self.lexical_output.clear()  # Limpiar cualquier contenido anterior
+        self.lexical_output.setRowCount(0)
+        self.lexical_output.setColumnCount(3)
+        self.lexical_output.setHorizontalHeaderLabels(["Línea", "Tipo de Token", "Valor"])
+
         # Análisis léxico
-        lex_output = "Línea | Tipo de Token | Valor\n" + "-" * 40 + "\n"
         lex_errors = []
         tokens = []
+        row = 0
         for tok in lexer:
             tokens.append(tok)
             if tok.type == 'error':
                 lex_errors.append(f"Error léxico en la línea {tok.lineno}: Carácter ilegal '{tok.value[0]}'")
             else:
-                lex_output += f"{tok.lineno:5d} | {tok.type:13s} | {tok.value}\n"
+                self.lexical_output.insertRow(row)
+                self.lexical_output.setItem(row, 0, QTableWidgetItem(str(tok.lineno)))
+                self.lexical_output.setItem(row, 1, QTableWidgetItem(tok.type))
+                self.lexical_output.setItem(row, 2, QTableWidgetItem(str(tok.value)))
+                row += 1
         
         if lex_errors:
-            lex_output += "\nErrores léxicos encontrados:\n" + "\n".join(lex_errors)
-        
-        self.lexical_output.setPlainText(lex_output)
+            for error in lex_errors:
+                self.lexical_output.insertRow(row)
+                self.lexical_output.setItem(row, 0, QTableWidgetItem(""))
+                self.lexical_output.setItem(row, 1, QTableWidgetItem("Error"))
+                self.lexical_output.setItem(row, 2, QTableWidgetItem(error))
+                row += 1
+
+        # Ajustar columnas al contenido
+        self.lexical_output.resizeColumnsToContents()
 
         # Análisis sintáctico
         try:
@@ -446,11 +463,7 @@ class CodeAnalyzerGUI(QMainWindow):
                 print(f"Nodo: {node.name}")  # Depuración
 
             # Mostrar el árbol en un QTextEdit
-            self.syntax_output.setPlainText(tree_str)  # Cambiado a setPlainText
-            
-            # Mostrar también la representación detallada del AST
-            detailed_ast = self.ast_to_string(self.ast)
-            self.syntax_output.append("\nRepresentación detallada del AST:\n" + detailed_ast)  # Cambiado a append
+            self.syntax_output.setPlainText(tree_str)  # Mostramos solo esta parte
             
         except Exception as e:
             print(f"Error: {str(e)}")  # Depuración
