@@ -40,16 +40,10 @@ numeros = [1, 2, 3, 4, 5]
 duplicados = list(map(lambda x: x * 2, numeros))
 print(duplicados)
 
-
-################################################## No lo reconoce el analizador lexico ##################################################
 # Ejemplo 7: Diccionarios
 frutas = {"manzana": 2, "banana": 3, "naranja": 1}
 for fruta, cantidad in frutas.items():
     print(f"Tengo {cantidad} {fruta}(s)")
-
-##########################################################################################################################################
-
-
 
 ################################################## No lo reconoce el analizador lexico ##################################################
 # Ejemplo 8: Decoradores

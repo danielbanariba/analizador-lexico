@@ -13,7 +13,8 @@ tokens = (
     'ID', 'EQUALS', 'COLON', 'COMMA', 'STRING', 'FSTRING', 'INDENT', 'DEDENT',
     'IF', 'ELSE', 'WHILE', 'FOR', 'IN', 'DEF', 'RETURN', 'PRINT', 'CLASS',
     'GT', 'LT', 'GE', 'LE', 'EQ', 'NE', 'COMMENT', 'NEWLINE', 'DOT',
-    'LAMBDA', 'LBRACKET', 'RBRACKET', 'LBRACE', 'RBRACE', 'DICT_METHOD'
+    'LAMBDA', 'LBRACKET', 'RBRACKET', 'LBRACE', 'RBRACE', 'DICT_METHOD',
+    'AT'  # Añadido el token AT para los decoradores
 )
 
 t_PLUS = r'\+'
@@ -51,6 +52,10 @@ def t_STRING(t):
 def t_FSTRING(t):
     r'f"[^"]*"|f\'[^\']*\''
     t.value = t.value[2:-1]  # Remove 'f' and quotes
+    return t
+
+def t_AT(t):
+    r'@'
     return t
 
 def t_ID(t):
@@ -150,7 +155,9 @@ def p_statement_list(p):
 
 def p_statement(p):
     '''statement : simple_statement
-                 | compound_statement'''
+                 | compound_statement
+                 | function_def
+                 | decorated_function_def'''
     p[0] = p[1]
 
 def p_simple_statement(p):
@@ -164,7 +171,6 @@ def p_compound_statement(p):
     '''compound_statement : if_statement
                           | while_statement
                           | for_statement
-                          | function_def
                           | class_def'''
     p[0] = p[1]
 
@@ -187,7 +193,7 @@ def p_print_statement(p):
 
 def p_expression_statement(p):
     '''expression_statement : expression
-                            | method_call'''
+                            | function_call'''
     p[0] = ('expression_statement', p[1])
 
 def p_expression_list(p):
@@ -217,6 +223,22 @@ def p_for_statement(p):
 def p_function_def(p):
     '''function_def : DEF ID LPAREN parameter_list RPAREN COLON NEWLINE INDENT statement_list DEDENT'''
     p[0] = ('function_def', p[2], p[4], p[9])
+
+def p_decorator(p):
+    '''decorator : AT ID NEWLINE
+                 | AT ID LPAREN RPAREN NEWLINE
+                 | AT ID LPAREN expression_list RPAREN NEWLINE'''
+    if len(p) == 4:
+        p[0] = ('decorator', p[2], None)
+    elif len(p) == 6:
+        p[0] = ('decorator', p[2], [])
+    else:
+        p[0] = ('decorator', p[2], p[4])
+
+def p_decorated_function_def(p):
+    '''decorated_function_def : decorator function_def
+                              | decorator decorated_function_def'''
+    p[0] = ('decorated_function', p[1], p[2])
 
 def p_class_def(p):
     '''class_def : CLASS ID COLON NEWLINE INDENT class_body DEDENT'''
@@ -345,10 +367,7 @@ def p_comparison_op(p):
 
 def p_error(p):
     if p:
-        print(f"Syntax error at token {p.type}")
-        print(f"Line: {p.lineno}")
-        print(f"Position: {p.lexpos}")
-        print(f"Value: {p.value}")
+        print(f"Syntax error at token {p.type}, value '{p.value}', line {p.lineno}, position {p.lexpos}")
     else:
         print("Syntax error at EOF")
 
@@ -414,6 +433,10 @@ print(duplicados)
                 self.tree_image = "No se pudo generar el árbol sintáctico."
                 self.debug_output += f"Error en el análisis sintáctico. Número de errores: {parser.error}\n"
 
+            # Imprimir el AST para depuración
+            self.debug_output += "AST generado:\n"
+            self.debug_output += str(result) + "\n"
+
             # Traducción a JavaScript
             self.js_output = self.translate_to_js(self.python_code)
 
@@ -446,6 +469,11 @@ print(duplicados)
                 for component in ast[1]:
                     Node(f"{component[0]}: {component[1]}", parent=node)
                 return node
+            elif ast[0] == 'decorated_function':
+                node = Node('decorated_function', parent=parent)
+                self.build_tree(ast[1], Node('decorator', parent=node))
+                self.build_tree(ast[2], node)
+                return node
             
             node = Node(str(ast[0]), parent=parent)
             for child in ast[1:]:
@@ -472,6 +500,11 @@ print(duplicados)
                 result = "  " * indent + "fstring:\n"
                 for component in ast[1]:
                     result += "  " * (indent + 1) + f"{component[0]}: {component[1]}\n"
+                return result
+            elif ast[0] == 'decorated_function':
+                result = "  " * indent + "decorated_function:\n"
+                result += self.pretty_print_ast(ast[1], indent + 1)
+                result += self.pretty_print_ast(ast[2], indent + 1)
                 return result
             return "  " * indent + f"{ast[0]}:\n" + "\n".join(self.pretty_print_ast(x, indent + 1) for x in ast[1:])
         elif isinstance(ast, list):
