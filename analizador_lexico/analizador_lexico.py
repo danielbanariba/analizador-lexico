@@ -14,7 +14,7 @@ tokens = (
     'IF', 'ELSE', 'WHILE', 'FOR', 'IN', 'DEF', 'RETURN', 'PRINT', 'CLASS',
     'GT', 'LT', 'GE', 'LE', 'EQ', 'NE', 'COMMENT', 'NEWLINE', 'DOT',
     'LAMBDA', 'LBRACKET', 'RBRACKET', 'LBRACE', 'RBRACE', 'DICT_METHOD',
-    'AT'  # Añadido el token AT para los decoradores
+    'AT'
 )
 
 t_PLUS = r'\+'
@@ -80,35 +80,41 @@ def t_NEWLINE(t):
 
 t_ignore = ' \t'
 
-def t_INDENT(t):
-    r'^[ \t]+'
-    if t.lexer.at_line_start:
-        depth = len(t.value.replace("\t", " " * 4))
-        if depth > t.lexer.indent_stack[-1]:
-            t.type = "INDENT"
-            t.lexer.indent_stack.append(depth)
-        elif depth < t.lexer.indent_stack[-1]:
-            t.type = "DEDENT"
-            while depth < t.lexer.indent_stack[-1]:
-                t.lexer.indent_stack.pop()
-                t.lexer.emit('DEDENT', '')
-            if depth != t.lexer.indent_stack[-1]:
-                raise IndentationError("Indentation error")
-        else:
-            return None  # Ignore if indentation is the same
-    t.lexer.at_line_start = False
-    return t
-
 def t_error(t):
     print(f"Illegal character '{t.value[0]}' at line {t.lexer.lineno}, position {t.lexpos}")
     t.lexer.skip(1)
+
+# Manejo de indentación
+def t_INDENT(t):
+    r'^\s+'
+    if t.lexer.at_line_start:
+        if len(t.value) > len(t.lexer.indent_stack[-1]):
+            t.type = "INDENT"
+            t.lexer.indent_stack.append(t.value)
+            return t
+        elif len(t.value) < len(t.lexer.indent_stack[-1]):
+            t.type = "DEDENT"
+            t.lexer.indent_stack.pop()
+            return t
+    t.lexer.at_line_start = False
+    return None  # Descartar si no es INDENT ni DEDENT
+
+def t_eof(t):
+    if len(t.lexer.indent_stack) > 1:
+        t.type = "DEDENT"
+        t.lexer.indent_stack.pop()
+        return t
 
 # Construir el lexer
 lexer = lex.lex()
 
 # Inicialización del lexer
-lexer.indent_stack = [0]
-lexer.at_line_start = True
+def init_lexer():
+    lexer = lex.lex()
+    lexer.indent_stack = ['']
+    lexer.at_line_start = True
+    lexer.paren_count = 0
+    return lexer
 
 # Función global para parsear f-strings
 def parse_fstring(fstring):
@@ -157,7 +163,7 @@ def p_statement(p):
     '''statement : simple_statement
                  | compound_statement
                  | function_def
-                 | decorated_function_def'''
+                 | class_def'''
     p[0] = p[1]
 
 def p_simple_statement(p):
@@ -170,8 +176,7 @@ def p_simple_statement(p):
 def p_compound_statement(p):
     '''compound_statement : if_statement
                           | while_statement
-                          | for_statement
-                          | class_def'''
+                          | for_statement'''
     p[0] = p[1]
 
 def p_assignment_statement(p):
@@ -224,22 +229,6 @@ def p_function_def(p):
     '''function_def : DEF ID LPAREN parameter_list RPAREN COLON NEWLINE INDENT statement_list DEDENT'''
     p[0] = ('function_def', p[2], p[4], p[9])
 
-def p_decorator(p):
-    '''decorator : AT ID NEWLINE
-                 | AT ID LPAREN RPAREN NEWLINE
-                 | AT ID LPAREN expression_list RPAREN NEWLINE'''
-    if len(p) == 4:
-        p[0] = ('decorator', p[2], None)
-    elif len(p) == 6:
-        p[0] = ('decorator', p[2], [])
-    else:
-        p[0] = ('decorator', p[2], p[4])
-
-def p_decorated_function_def(p):
-    '''decorated_function_def : decorator function_def
-                              | decorator decorated_function_def'''
-    p[0] = ('decorated_function', p[1], p[2])
-
 def p_class_def(p):
     '''class_def : CLASS ID COLON NEWLINE INDENT class_body DEDENT'''
     p[0] = ('class_def', p[2], p[6])
@@ -263,6 +252,7 @@ def p_expression(p):
     '''expression : arithmetic_expr
                   | comparison_expr
                   | function_call
+                  | method_call
                   | attribute
                   | lambda_expr
                   | list_expr
@@ -377,9 +367,13 @@ parser.error = 0
 
 class State(rx.State):
     python_code: str = """
-numeros = [1, 2, 3, 4, 5]
-duplicados = list(map(lambda x: x * 2, numeros))
-print(duplicados)
+class Persona:
+    def __init__(self, nombre):
+        self.nombre = nombre
+    def saludar(self):
+        print(f"Hola, soy {self.nombre}")
+p = Persona("Juan")
+p.saludar()
 """
     lexical_output: List[Dict[str, str]] = []
     syntax_output: str = ""
@@ -398,6 +392,9 @@ print(duplicados)
     def analyze_code(self):
         self.debug_output = "Iniciando análisis...\n"
 
+        # Reiniciar el lexer
+        lexer = init_lexer()
+
         # Capturar la salida estándar y de error
         old_stdout = sys.stdout
         old_stderr = sys.stderr
@@ -407,20 +404,23 @@ print(duplicados)
         try:
             # Análisis léxico
             lexer.input(self.python_code)
-            self.lexical_output = [
-                {
+            self.lexical_output = []
+            while True:
+                tok = lexer.token()
+                if not tok:
+                    break
+                self.lexical_output.append({
                     "linea": str(tok.lineno),
                     "tipo": str(tok.type),
                     "valor": str(tok.value)
-                }
-                for tok in lexer
-            ]
+                })
+            
             self.debug_output += f"Análisis léxico completado. Tokens encontrados: {len(self.lexical_output)}\n"
             self.debug_output += "Tokens:\n" + "\n".join(str(tok) for tok in self.lexical_output) + "\n"
 
             # Análisis sintáctico
             parser.error = 0  # Reiniciar contador de errores
-            result = parser.parse(self.python_code, debug=True)  # Activar modo de depuración
+            result = parser.parse(self.python_code, lexer=lexer, debug=True)  # Activar modo de depuración
             if result is not None:
                 self.syntax_output = self.pretty_print_ast(result)
                 self.debug_output += "AST generado con éxito.\n"
@@ -464,24 +464,13 @@ print(duplicados)
             return Node(str(ast), parent=parent)
         
         if isinstance(ast, tuple):
-            if ast[0] == 'fstring':
-                node = Node('fstring', parent=parent)
-                for component in ast[1]:
-                    Node(f"{component[0]}: {component[1]}", parent=node)
-                return node
-            elif ast[0] == 'decorated_function':
-                node = Node('decorated_function', parent=parent)
-                self.build_tree(ast[1], Node('decorator', parent=node))
-                self.build_tree(ast[2], node)
-                return node
-            
             node = Node(str(ast[0]), parent=parent)
             for child in ast[1:]:
                 self.build_tree(child, node)
             return node
         
         if isinstance(ast, list):
-            node = Node("program" if parent is None else "block", parent=parent)
+            node = Node("block", parent=parent)
             for item in ast:
                 self.build_tree(item, node)
             return node
@@ -500,11 +489,6 @@ print(duplicados)
                 result = "  " * indent + "fstring:\n"
                 for component in ast[1]:
                     result += "  " * (indent + 1) + f"{component[0]}: {component[1]}\n"
-                return result
-            elif ast[0] == 'decorated_function':
-                result = "  " * indent + "decorated_function:\n"
-                result += self.pretty_print_ast(ast[1], indent + 1)
-                result += self.pretty_print_ast(ast[2], indent + 1)
                 return result
             return "  " * indent + f"{ast[0]}:\n" + "\n".join(self.pretty_print_ast(x, indent + 1) for x in ast[1:])
         elif isinstance(ast, list):
@@ -619,23 +603,6 @@ print(duplicados)
                 else:
                     return f"let {var} = {value}"
         
-        # Manejo de funciones lambda y map
-        if 'lambda' in line:
-            match = re.search(r'lambda\s+([^:]+):\s*(.+)', line)
-            if match:
-                params, body = match.groups()
-                return f"({params}) => {body}"
-        
-        if 'list(map(' in line:
-            match = re.search(r'list\(map\(([^,]+),\s*([^)]+)\)\)', line)
-            if match:
-                func, iterable = match.groups()
-                return f"Array.from({iterable}).map({func})"
-        
-        # Manejo de diccionarios
-        if line.strip().startswith('{') and line.strip().endswith('}'):
-            return line.replace("'", '"')  # Cambiar comillas simples por dobles para JSON
-        
         return line
 
     def translate_fstring(self, line):
@@ -683,7 +650,7 @@ def custom_table(data: rx.Var[List[Dict[str, str]]]):
                 width="100%",
             ),
             overflow_y="auto",
-            height="180px",  # Ajustado para dejar espacio para el encabezado
+            height="180px",
             width="100%",
         ),
         height="200px",
