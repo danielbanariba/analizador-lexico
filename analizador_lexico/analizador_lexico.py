@@ -12,7 +12,8 @@ tokens = (
     'NUMBER', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MODULO', 'LPAREN', 'RPAREN',
     'ID', 'EQUALS', 'COLON', 'COMMA', 'STRING', 'INDENT', 'DEDENT',
     'IF', 'ELSE', 'WHILE', 'FOR', 'IN', 'DEF', 'RETURN', 'PRINT', 'CLASS',
-    'GT', 'LT', 'GE', 'LE', 'EQ', 'NE', 'COMMENT', 'NEWLINE', 'DOT'
+    'GT', 'LT', 'GE', 'LE', 'EQ', 'NE', 'COMMENT', 'NEWLINE', 'DOT',
+    'LAMBDA', 'LBRACKET', 'RBRACKET'
 )
 
 t_PLUS = r'\+'
@@ -32,6 +33,8 @@ t_LE = r'<='
 t_EQ = r'=='
 t_NE = r'!='
 t_DOT = r'\.'
+t_LBRACKET = r'\['
+t_RBRACKET = r'\]'
 
 def t_NUMBER(t):
     r'\d+'
@@ -45,7 +48,9 @@ def t_STRING(t):
 
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
-    if t.value in ['if', 'else', 'while', 'for', 'in', 'def', 'return', 'print', 'class']:
+    if t.value == 'lambda':
+        t.type = 'LAMBDA'
+    elif t.value in ['if', 'else', 'while', 'for', 'in', 'def', 'return', 'print', 'class']:
         t.type = t.value.upper()
     return t
 
@@ -202,8 +207,22 @@ def p_expression(p):
     '''expression : arithmetic_expr
                   | comparison_expr
                   | function_call
-                  | attribute'''
+                  | attribute
+                  | lambda_expr
+                  | list_expr'''
     p[0] = p[1]
+
+def p_lambda_expr(p):
+    '''lambda_expr : LAMBDA parameter_list COLON expression'''
+    p[0] = ('lambda', p[2], p[4])
+
+def p_list_expr(p):
+    '''list_expr : LBRACKET expression_list RBRACKET
+                 | LBRACKET RBRACKET'''
+    if len(p) == 4:
+        p[0] = ('list', p[2])
+    else:
+        p[0] = ('list', [])
 
 def p_arithmetic_expr(p):
     '''arithmetic_expr : term
@@ -237,11 +256,14 @@ def p_factor(p):
 
 def p_function_call(p):
     '''function_call : ID LPAREN expression_list RPAREN
-                     | ID LPAREN RPAREN'''
+                     | ID LPAREN RPAREN
+                     | ID LPAREN lambda_expr COMMA expression RPAREN'''
     if len(p) == 5:
         p[0] = ('function_call', p[1], p[3])
-    else:
+    elif len(p) == 4:
         p[0] = ('function_call', p[1], [])
+    else:
+        p[0] = ('function_call', p[1], [p[3], p[5]])
 
 def p_method_call(p):
     '''method_call : ID DOT ID LPAREN expression_list RPAREN
@@ -283,16 +305,9 @@ parser.error = 0
 
 class State(rx.State):
     python_code: str = """
-class Persona:
-    def __init__(self, nombre, edad):
-        self.nombre = nombre
-        self.edad = edad
-   
-    def saludar(self):
-        print(f"Hola, soy {self.nombre} y tengo {self.edad} años.")
-
-persona1 = Persona("Ana", 30)
-persona1.saludar()
+numeros = [1, 2, 3, 4, 5]
+duplicados = list(map(lambda x: x * 2, numeros))
+print(duplicados)
 """
     lexical_output: List[Dict[str, str]] = []
     syntax_output: str = ""
@@ -506,6 +521,19 @@ persona1.saludar()
                     return f"{var} /= {value.replace('/=', '').strip()}"
                 else:
                     return f"let {var} = {value}"
+        
+        # Manejo de funciones lambda y map
+        if 'lambda' in line:
+            match = re.search(r'lambda\s+([^:]+):\s*(.+)', line)
+            if match:
+                params, body = match.groups()
+                return f"({params}) => {body}"
+        
+        if 'list(map(' in line:
+            match = re.search(r'list\(map\(([^,]+),\s*([^)]+)\)\)', line)
+            if match:
+                func, iterable = match.groups()
+                return f"Array.from({iterable}).map({func})"
         
         return line
 
