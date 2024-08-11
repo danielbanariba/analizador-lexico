@@ -11,15 +11,15 @@ from typing import List, Dict, Any
 tokens = (
     'NUMBER', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MODULO', 'LPAREN', 'RPAREN',
     'ID', 'EQUALS', 'COLON', 'COMMA', 'STRING', 'INDENT', 'DEDENT',
-    'IF', 'ELSE', 'WHILE', 'FOR', 'IN', 'DEF', 'RETURN', 'PRINT',
-    'GT', 'LT', 'GE', 'LE', 'EQ', 'NE', 'COMMENT', 'NEWLINE'
+    'IF', 'ELSE', 'WHILE', 'FOR', 'IN', 'DEF', 'RETURN', 'PRINT', 'CLASS',
+    'GT', 'LT', 'GE', 'LE', 'EQ', 'NE', 'COMMENT', 'NEWLINE', 'DOT'
 )
 
-t_MODULO = r'%'
 t_PLUS = r'\+'
 t_MINUS = r'-'
 t_TIMES = r'\*'
 t_DIVIDE = r'/'
+t_MODULO = r'%'
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_EQUALS = r'='
@@ -31,6 +31,7 @@ t_GE = r'>='
 t_LE = r'<='
 t_EQ = r'=='
 t_NE = r'!='
+t_DOT = r'\.'
 
 def t_NUMBER(t):
     r'\d+'
@@ -38,13 +39,13 @@ def t_NUMBER(t):
     return t
 
 def t_STRING(t):
-    r'\"([^\\\n]|(\\.))*?\"'
+    r'(\"([^\\\n]|(\\.))*?\"|\'([^\\\n]|(\\.))*?\')'
     t.value = t.value[1:-1]  # Remove quotes
     return t
 
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
-    if t.value in ['if', 'else', 'while', 'for', 'in', 'def', 'return', 'print']:
+    if t.value in ['if', 'else', 'while', 'for', 'in', 'def', 'return', 'print', 'class']:
         t.type = t.value.upper()
     return t
 
@@ -75,9 +76,9 @@ def t_INDENT(t):
             if depth != t.lexer.indent_stack[-1]:
                 raise IndentationError("Indentation error")
         else:
-            t.type = "IGNORE"
-        return t if t.type != "IGNORE" else None
+            return None  # Ignore if indentation is the same
     t.lexer.at_line_start = False
+    return t
 
 def t_error(t):
     print(f"Illegal character '{t.value[0]}' at line {t.lexer.lineno}")
@@ -124,11 +125,13 @@ def p_compound_statement(p):
     '''compound_statement : if_statement
                           | while_statement
                           | for_statement
-                          | function_def'''
+                          | function_def
+                          | class_def'''
     p[0] = p[1]
 
 def p_assignment_statement(p):
-    '''assignment_statement : ID EQUALS expression'''
+    '''assignment_statement : ID EQUALS expression
+                            | attribute EQUALS expression'''
     p[0] = ('assignment', p[1], p[3])
 
 def p_return_statement(p):
@@ -144,21 +147,17 @@ def p_print_statement(p):
         p[0] = ('print', [])
 
 def p_expression_statement(p):
-    '''expression_statement : expression'''
+    '''expression_statement : expression
+                            | method_call'''
     p[0] = ('expression_statement', p[1])
 
 def p_expression_list(p):
     '''expression_list : expression
-                       | expression_list COMMA expression
-                       | STRING
-                       | expression_list COMMA STRING'''
+                       | expression_list COMMA expression'''
     if len(p) == 2:
         p[0] = [p[1]]
-    elif len(p) == 4:
-        if isinstance(p[1], list):
-            p[0] = p[1] + [p[3]]
-        else:
-            p[0] = [p[1], p[3]]
+    else:
+        p[0] = p[1] + [p[3]]
 
 def p_if_statement(p):
     '''if_statement : IF expression COLON NEWLINE INDENT statement_list DEDENT
@@ -180,6 +179,14 @@ def p_function_def(p):
     '''function_def : DEF ID LPAREN parameter_list RPAREN COLON NEWLINE INDENT statement_list DEDENT'''
     p[0] = ('function_def', p[2], p[4], p[9])
 
+def p_class_def(p):
+    '''class_def : CLASS ID COLON NEWLINE INDENT class_body DEDENT'''
+    p[0] = ('class_def', p[2], p[6])
+
+def p_class_body(p):
+    '''class_body : statement_list'''
+    p[0] = p[1]
+
 def p_parameter_list(p):
     '''parameter_list : ID
                       | parameter_list COMMA ID
@@ -193,7 +200,9 @@ def p_parameter_list(p):
 
 def p_expression(p):
     '''expression : arithmetic_expr
-                  | comparison_expr'''
+                  | comparison_expr
+                  | function_call
+                  | attribute'''
     p[0] = p[1]
 
 def p_arithmetic_expr(p):
@@ -219,6 +228,7 @@ def p_factor(p):
               | NUMBER
               | STRING
               | ID
+              | attribute
               | function_call'''
     if len(p) == 2:
         p[0] = p[1]
@@ -226,8 +236,24 @@ def p_factor(p):
         p[0] = p[2]
 
 def p_function_call(p):
-    '''function_call : ID LPAREN expression_list RPAREN'''
-    p[0] = ('function_call', p[1], p[3])
+    '''function_call : ID LPAREN expression_list RPAREN
+                     | ID LPAREN RPAREN'''
+    if len(p) == 5:
+        p[0] = ('function_call', p[1], p[3])
+    else:
+        p[0] = ('function_call', p[1], [])
+
+def p_method_call(p):
+    '''method_call : ID DOT ID LPAREN expression_list RPAREN
+                   | ID DOT ID LPAREN RPAREN'''
+    if len(p) == 7:
+        p[0] = ('method_call', p[1], p[3], p[5])
+    else:
+        p[0] = ('method_call', p[1], p[3], [])
+
+def p_attribute(p):
+    '''attribute : ID DOT ID'''
+    p[0] = ('attribute', p[1], p[3])
 
 def p_comparison_expr(p):
     '''comparison_expr : arithmetic_expr comparison_op arithmetic_expr'''
@@ -257,14 +283,16 @@ parser.error = 0
 
 class State(rx.State):
     python_code: str = """
-def factorial(n):
-    if n == 0 or n == 1:
-        return 1
-    else:
-        return n * factorial(n - 1)
+class Persona:
+    def __init__(self, nombre, edad):
+        self.nombre = nombre
+        self.edad = edad
+   
+    def saludar(self):
+        print(f"Hola, soy {self.nombre} y tengo {self.edad} años.")
 
-result = factorial(5)
-print("El factorial de 5 es:", result)
+persona1 = Persona("Ana", 30)
+persona1.saludar()
 """
     lexical_output: List[Dict[str, str]] = []
     syntax_output: str = ""
@@ -377,7 +405,7 @@ print("El factorial de 5 es:", result)
         lines = python_code.split('\n')
         indent_level = 0
         indent_size = 4
-        in_function = False
+        in_class = False
         
         for line in lines:
             stripped_line = line.strip()
@@ -393,18 +421,26 @@ print("El factorial de 5 es:", result)
                 js_code += '  ' * indent_level + '}\n'
             
             translated_line = self.translate_line_to_js(stripped_line)
-            js_code += '  ' * indent_level + translated_line
             
-            if stripped_line.endswith(':'):
+            if stripped_line.startswith('class '):
+                in_class = True
+                js_code += '  ' * indent_level + translated_line + ' {\n'
+                indent_level += 1
+            elif in_class and stripped_line.startswith('def '):
+                if '__init__' in stripped_line:
+                    translated_line = translated_line.replace('function __init__', 'constructor')
+                else:
+                    translated_line = translated_line.replace('function ', '')
+                js_code += '  ' * indent_level + translated_line + ' {\n'
+                indent_level += 1
+            else:
+                js_code += '  ' * indent_level + translated_line
+            
+            if stripped_line.endswith(':') and not stripped_line.startswith('class '):
                 if not translated_line.endswith('{'):
                     js_code += ' {'
                 js_code += '\n'
                 indent_level += 1
-                if stripped_line.startswith('def '):
-                    in_function = True
-            elif in_function and stripped_line.startswith('return '):
-                js_code += ';\n'
-                in_function = False
             elif not translated_line.endswith('{') and not translated_line.endswith('}'):
                 js_code += ';\n'
             else:
@@ -419,6 +455,8 @@ print("El factorial de 5 es:", result)
     def translate_line_to_js(self, line):
         # Traducir palabras clave de Python a JavaScript
         line = line.replace('def ', 'function ')
+        line = line.replace('class ', 'class ')
+        line = line.replace('__init__', 'constructor')
         line = line.replace('elif ', 'else if ')
         line = line.replace(':', '')
         line = line.replace('True', 'true')
@@ -426,6 +464,7 @@ print("El factorial de 5 es:", result)
         line = line.replace(' and ', ' && ')
         line = line.replace(' or ', ' || ')
         line = line.replace(' not ', ' !')
+        line = line.replace('self.', 'this.')
         
         # Traducción de operadores de comparación
         line = line.replace(' == ', ' === ')
@@ -436,6 +475,10 @@ print("El factorial de 5 es:", result)
         if line.strip().startswith('print('):
             content = line.strip()[6:-1]  # Eliminar 'print(' y ')'
             return f"console.log({content})"
+        
+        # Manejo de f-strings
+        if 'f"' in line or "f'" in line:
+            line = self.translate_fstring(line)
         
         # Manejo de bucles for
         if line.startswith('for ') and 'range' in line:
@@ -464,14 +507,18 @@ print("El factorial de 5 es:", result)
                 else:
                     return f"let {var} = {value}"
         
-        # Manejo de declaraciones if
-        if line.startswith('if ') or line.startswith('elif ') or line.startswith('else'):
-            line = line.rstrip(':')
-            if 'if ' in line or 'elif ' in line:
-                condition = line.split('if ')[-1].split('elif ')[-1].strip()
-                return f"if ({condition})"
-            else:
-                return "else"
+        return line
+
+    def translate_fstring(self, line):
+        # Eliminar 'f' del principio de la cadena
+        line = line.replace('f"', '"').replace("f'", "'")
+        
+        # Reemplazar expresiones {} con ${}
+        line = re.sub(r'{([^}]+)}', r'${\\1}', line)
+        
+        # Cambiar comillas simples por comillas invertidas (backticks)
+        if line.startswith("'") and line.endswith("'"):
+            line = f"`{line[1:-1]}`"
         
         return line
 

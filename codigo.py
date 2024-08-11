@@ -40,11 +40,17 @@ numeros = [1, 2, 3, 4, 5]
 duplicados = list(map(lambda x: x * 2, numeros))
 print(duplicados)
 
+
+################################################## No lo reconoce el analizador lexico ##################################################
 # Ejemplo 7: Diccionarios
 frutas = {"manzana": 2, "banana": 3, "naranja": 1}
 for fruta, cantidad in frutas.items():
     print(f"Tengo {cantidad} {fruta}(s)")
+##########################################################################################################################################
 
+
+
+################################################## No lo reconoce el analizador lexico ##################################################
 # Ejemplo 8: Decoradores
 def mi_decorador(funcion):
     def wrapper():
@@ -58,6 +64,8 @@ def saludo():
     print("¡Hola, mundo!")
 
 saludo()
+##########################################################################################################################################
+
 
 # Ejemplo 9: Generadores
 def contador(max):
@@ -69,7 +77,10 @@ def contador(max):
 for num in contador(5):
     print(num)
 
+
+################################################## No lo reconoce el analizador lexico ##################################################
 # Ejemplo 10: f-strings y métodos de cadenas
 nombre = "python"
 version = 3.9
 print(f"{nombre.capitalize()} versión {version}")
+##########################################################################################################################################
