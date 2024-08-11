@@ -1,6 +1,6 @@
 # Casos de Prueba Python para Analizador Sintáctico
 
-## 1. Programa simple: Hola Mundo
+## 1. Programa simple: Hola Mundo ✅
 
 ### Código Python:
 ```python
@@ -21,7 +21,7 @@ program
     └── "Hola Mundo"
 ```
 
-## 2. Asignación y operación aritmética simple
+## 2. Asignación y operación aritmética simple ✅
 
 ### Código Python:
 ```python
@@ -148,7 +148,7 @@ program
             └── i
 ```
 
-## 5. Función simple
+## 5. Función simple ✅
 
 ### Código Python:
 ```python
@@ -205,7 +205,7 @@ program
     └── resultado
 ```
 
-## 6. Clase simple
+## 6. Clase simple ✅
 
 ### Código Python:
 ```python
