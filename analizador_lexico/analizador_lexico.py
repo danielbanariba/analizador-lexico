@@ -10,10 +10,10 @@ from typing import List, Dict, Any
 # Definición del analizador léxico
 tokens = (
     'NUMBER', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MODULO', 'LPAREN', 'RPAREN',
-    'ID', 'EQUALS', 'COLON', 'COMMA', 'STRING', 'INDENT', 'DEDENT',
+    'ID', 'EQUALS', 'COLON', 'COMMA', 'STRING', 'FSTRING', 'INDENT', 'DEDENT',
     'IF', 'ELSE', 'WHILE', 'FOR', 'IN', 'DEF', 'RETURN', 'PRINT', 'CLASS',
     'GT', 'LT', 'GE', 'LE', 'EQ', 'NE', 'COMMENT', 'NEWLINE', 'DOT',
-    'LAMBDA', 'LBRACKET', 'RBRACKET'
+    'LAMBDA', 'LBRACKET', 'RBRACKET', 'LBRACE', 'RBRACE', 'DICT_METHOD'
 )
 
 t_PLUS = r'\+'
@@ -35,6 +35,8 @@ t_NE = r'!='
 t_DOT = r'\.'
 t_LBRACKET = r'\['
 t_RBRACKET = r'\]'
+t_LBRACE = r'\{'
+t_RBRACE = r'\}'
 
 def t_NUMBER(t):
     r'\d+'
@@ -42,14 +44,21 @@ def t_NUMBER(t):
     return t
 
 def t_STRING(t):
-    r'(\"([^\\\n]|(\\.))*?\"|\'([^\\\n]|(\\.))*?\')'
+    r'("([^"\\]|\\.)*")|(\'([^\'\\]|\\.)*\')'
     t.value = t.value[1:-1]  # Remove quotes
+    return t
+
+def t_FSTRING(t):
+    r'f"[^"]*"|f\'[^\']*\''
+    t.value = t.value[2:-1]  # Remove 'f' and quotes
     return t
 
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
     if t.value == 'lambda':
         t.type = 'LAMBDA'
+    elif t.value in ['items', 'keys', 'values']:
+        t.type = 'DICT_METHOD'
     elif t.value in ['if', 'else', 'while', 'for', 'in', 'def', 'return', 'print', 'class']:
         t.type = t.value.upper()
     return t
@@ -86,7 +95,7 @@ def t_INDENT(t):
     return t
 
 def t_error(t):
-    print(f"Illegal character '{t.value[0]}' at line {t.lexer.lineno}")
+    print(f"Illegal character '{t.value[0]}' at line {t.lexer.lineno}, position {t.lexpos}")
     t.lexer.skip(1)
 
 # Construir el lexer
@@ -95,6 +104,31 @@ lexer = lex.lex()
 # Inicialización del lexer
 lexer.indent_stack = [0]
 lexer.at_line_start = True
+
+# Función global para parsear f-strings
+def parse_fstring(fstring):
+    components = []
+    current_text = ""
+    in_expression = False
+    
+    for char in fstring:
+        if char == '{' and not in_expression:
+            if current_text:
+                components.append(('text', current_text))
+                current_text = ""
+            in_expression = True
+        elif char == '}' and in_expression:
+            if current_text:
+                components.append(('expression', current_text.strip()))
+                current_text = ""
+            in_expression = False
+        else:
+            current_text += char
+    
+    if current_text:
+        components.append(('text', current_text))
+    
+    return components
 
 # Definición del analizador sintáctico
 def p_program(p):
@@ -144,12 +178,12 @@ def p_return_statement(p):
     p[0] = ('return', p[2])
 
 def p_print_statement(p):
-    '''print_statement : PRINT LPAREN expression_list RPAREN
+    '''print_statement : PRINT LPAREN expression RPAREN
                        | PRINT LPAREN RPAREN'''
     if len(p) == 5:
         p[0] = ('print', p[3])
     else:
-        p[0] = ('print', [])
+        p[0] = ('print', None)
 
 def p_expression_statement(p):
     '''expression_statement : expression
@@ -209,7 +243,9 @@ def p_expression(p):
                   | function_call
                   | attribute
                   | lambda_expr
-                  | list_expr'''
+                  | list_expr
+                  | fstring_expr
+                  | STRING'''
     p[0] = p[1]
 
 def p_lambda_expr(p):
@@ -223,6 +259,23 @@ def p_list_expr(p):
         p[0] = ('list', p[2])
     else:
         p[0] = ('list', [])
+
+def p_dict_expr(p):
+    '''dict_expr : LBRACE dict_items RBRACE'''
+    p[0] = ('dict', p[2])
+
+def p_dict_items(p):
+    '''dict_items : expression COLON expression
+                  | dict_items COMMA expression COLON expression'''
+    if len(p) == 4:
+        p[0] = [(p[1], p[3])]
+    else:
+        p[0] = p[1] + [(p[3], p[5])]
+
+def p_fstring_expr(p):
+    '''fstring_expr : FSTRING'''
+    components = parse_fstring(p[1])
+    p[0] = ('fstring', components)
 
 def p_arithmetic_expr(p):
     '''arithmetic_expr : term
@@ -388,6 +441,12 @@ print(duplicados)
             return Node(str(ast), parent=parent)
         
         if isinstance(ast, tuple):
+            if ast[0] == 'fstring':
+                node = Node('fstring', parent=parent)
+                for component in ast[1]:
+                    Node(f"{component[0]}: {component[1]}", parent=node)
+                return node
+            
             node = Node(str(ast[0]), parent=parent)
             for child in ast[1:]:
                 self.build_tree(child, node)
@@ -409,6 +468,11 @@ print(duplicados)
 
     def pretty_print_ast(self, ast, indent=0):
         if isinstance(ast, tuple):
+            if ast[0] == 'fstring':
+                result = "  " * indent + "fstring:\n"
+                for component in ast[1]:
+                    result += "  " * (indent + 1) + f"{component[0]}: {component[1]}\n"
+                return result
             return "  " * indent + f"{ast[0]}:\n" + "\n".join(self.pretty_print_ast(x, indent + 1) for x in ast[1:])
         elif isinstance(ast, list):
             return "\n".join(self.pretty_print_ast(x, indent) for x in ast)
@@ -534,6 +598,10 @@ print(duplicados)
             if match:
                 func, iterable = match.groups()
                 return f"Array.from({iterable}).map({func})"
+        
+        # Manejo de diccionarios
+        if line.strip().startswith('{') and line.strip().endswith('}'):
+            return line.replace("'", '"')  # Cambiar comillas simples por dobles para JSON
         
         return line
 

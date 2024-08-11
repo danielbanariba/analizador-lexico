@@ -46,6 +46,7 @@ print(duplicados)
 frutas = {"manzana": 2, "banana": 3, "naranja": 1}
 for fruta, cantidad in frutas.items():
     print(f"Tengo {cantidad} {fruta}(s)")
+
 ##########################################################################################################################################
 
 
