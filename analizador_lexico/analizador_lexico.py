@@ -1,12 +1,13 @@
-import reflex as rx
-import ply.lex as lex
-import ply.yacc as yacc
+
+from analizador_lexico.components.custom_table import custom_table
 from anytree import Node, RenderTree
+from typing import List, Dict
+import ply.yacc as yacc
+import ply.lex as lex
+import reflex as rx
 import re
 import sys
 import io
-from typing import List, Dict
-from analizador_lexico.components.custom_table import custom_table
 
 # Definición del analizador léxico
 tokens = (
