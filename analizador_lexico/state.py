@@ -1,10 +1,10 @@
-import reflex as rx
+from analizador_lexico.python_analyzer.lexer import init_lexer, parser
+from anytree import Node, RenderTree
 from typing import List, Dict
+import reflex as rx
 import re
 import sys
 import io
-from anytree import Node, RenderTree
-from analizador_lexico.lexer import parser, init_lexer
 
 class State(rx.State):
     python_code: str = """
