@@ -1,11 +1,5 @@
-from anytree import Node, RenderTree
-from typing import List, Dict
 import ply.yacc as yacc
 import ply.lex as lex
-import reflex as rx
-import re
-import sys
-import io
 
 # Definición del analizador léxico
 tokens = (
