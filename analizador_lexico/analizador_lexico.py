@@ -1,5 +1,6 @@
 
 from analizador_lexico.components.custom_table import custom_table
+from analizador_lexico.components.github_icon import github_icon
 from anytree import Node, RenderTree
 from typing import List, Dict
 import ply.yacc as yacc
@@ -622,6 +623,7 @@ p.saludar()
 
 def index():
     return rx.container(
+        github_icon(),
         rx.vstack(
             rx.heading("Analizador y Traductor de Código Python a JavaScript"),
             rx.text_area(
