@@ -652,7 +652,13 @@ def index():
                 border_radius="md",
             ),
             rx.heading("Código JavaScript", size="md"),
-            rx.text_area(value=State.js_output, is_read_only=True, height="200px", width="100%"),
+            rx.code_block(
+                State.js_output, 
+                theme="one-dark",
+                language="javascript",
+                show_line_numbers=True,
+                width="100%"
+            ),
             rx.heading("Información de Depuración", size="md"),
             rx.text_area(value=State.debug_output, is_read_only=True, height="300px", width="100%"),
             width="100%",
