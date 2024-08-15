@@ -4,8 +4,6 @@
 .web
 __init__.py
 __pycache__/
-assets
-assets/external/
 env
 experimento
 parser.out
