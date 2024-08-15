@@ -7,15 +7,7 @@ import sys
 import io
 
 class State(rx.State):
-    python_code: str = """
-class Persona:
-    def __init__(self, nombre):
-        self.nombre = nombre
-    def saludar(self):
-        print(f"Hola, soy {self.nombre}")
-p = Persona("Juan")
-p.saludar()
-"""
+    python_code: str = "\n"
     lexical_output: List[Dict[str, str]] = []
     syntax_output: str = ""
     js_output: str = ""

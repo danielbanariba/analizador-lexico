@@ -23,8 +23,16 @@ def index():
             rx.divider(),
             rx.heading("Análisis Léxico", size="md"),
             custom_table(State.lexical_output),
+            rx.divider(),
             rx.heading("Análisis Sintáctico", size="md"),
-            rx.text_area(value=State.syntax_output, is_read_only=True, height="200px", width="100%"),
+            rx.code_block(
+                State.syntax_output,
+                theme="twilight", #twilight, xonokai
+                language="apex",
+                show_line_numbers=True,
+                width="100%"
+            ),
+            rx.divider(),
             rx.heading("Árbol Sintáctico", size="md"),
             rx.box(
                 State.tree_image,
@@ -36,6 +44,7 @@ def index():
                 p="4",
                 border_radius="md",
             ),
+            rx.divider(),
             rx.heading("Código JavaScript", size="md"),
             rx.code_block(
                 State.js_output, 
@@ -44,8 +53,8 @@ def index():
                 show_line_numbers=True,
                 width="100%"
             ),
-            rx.heading("Información de Depuración", size="md"),
-            rx.text_area(value=State.debug_output, is_read_only=True, height="300px", width="100%"),
+            # rx.heading("Información de Depuración", size="md"),
+            # rx.text_area(value=State.debug_output, is_read_only=True, height="300px", width="100%"),
             width="100%",
             max_width="800px",
             spacing="4",
