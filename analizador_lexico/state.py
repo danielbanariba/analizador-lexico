@@ -7,7 +7,7 @@ import sys
 import io
 
 class State(rx.State):
-    python_code: str = "\n"
+    python_code: str = ""
     lexical_output: List[Dict[str, str]] = []
     syntax_output: str = ""
     js_output: str = ""
@@ -22,8 +22,20 @@ class State(rx.State):
         self.tree_image = ""
         self.debug_output = ""
 
+    async def handle_file_upload(self, files: List[rx.UploadFile]):
+        if not files:
+            return
+        
+        file = files[0]  # Tomamos solo el primer archivo
+        content = await file.read()
+        self.python_code = content.decode("utf-8")
+        self.analyze_code()  # Llamamos a analyze_code directamente después de cargar el archivo
+
     def analyze_code(self):
         self.debug_output = "Iniciando análisis...\n"
+        
+        # Asegúrate de que haya un salto de línea al final del código
+        python_code = self.python_code.rstrip() + '\n'
 
         # Reiniciar el lexer
         lexer = init_lexer()
@@ -36,7 +48,7 @@ class State(rx.State):
 
         try:
             # Análisis léxico
-            lexer.input(self.python_code)
+            lexer.input(python_code)
             self.lexical_output = []
             while True:
                 tok = lexer.token()

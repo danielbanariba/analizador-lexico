@@ -8,7 +8,7 @@ tokens = (
     'IF', 'ELSE', 'WHILE', 'FOR', 'IN', 'DEF', 'RETURN', 'PRINT', 'CLASS',
     'GT', 'LT', 'GE', 'LE', 'EQ', 'NE', 'COMMENT', 'NEWLINE', 'DOT',
     'LAMBDA', 'LBRACKET', 'RBRACKET', 'LBRACE', 'RBRACE', 'DICT_METHOD',
-    'AT'
+    'AT', 'EOF'
 )
 
 t_PLUS = r'\+'
@@ -75,7 +75,7 @@ def t_NEWLINE(t):
 t_ignore = ' \t'
 
 def t_error(t):
-    print(f"Illegal character '{t.value[0]}' at line {t.lexer.lineno}, position {t.lexpos}")
+    print(f"Carácter ilegal '{t.value[0]}' en la línea {t.lexer.lineno}, posición {t.lexpos}")
     t.lexer.skip(1)
 
 # Manejo de indentación
@@ -94,10 +94,11 @@ def t_INDENT(t):
     return None  # Descartar si no es INDENT ni DEDENT
 
 def t_eof(t):
+    t.type = 'EOF'
     if len(t.lexer.indent_stack) > 1:
-        t.type = "DEDENT"
         t.lexer.indent_stack.pop()
         return t
+    return None
 
 # Construir el lexer
 lexer = lex.lex()
@@ -138,8 +139,12 @@ def parse_fstring(fstring):
 # Definición del analizador sintáctico
 def p_program(p):
     '''program : statement_list
+               | statement_list EOF
                | empty'''
-    p[0] = ('program', p[1])
+    if len(p) == 2:
+        p[0] = ('program', p[1])
+    else:
+        p[0] = ('program', p[1])  # Ignoramos el EOF en el AST final
     
 def p_empty(p):
     'empty :'
@@ -147,9 +152,15 @@ def p_empty(p):
 
 def p_statement_list(p):
     '''statement_list : statement
-                      | statement_list statement'''
+                      | statement_list statement
+                      | statement EOF'''
     if len(p) == 2:
         p[0] = [p[1]]
+    elif len(p) == 3:
+        if p[2] == 'EOF':
+            p[0] = [p[1]]
+        else:
+            p[0] = p[1] + [p[2]]
     else:
         p[0] = p[1] + [p[2]]
 
@@ -161,11 +172,17 @@ def p_statement(p):
     p[0] = p[1]
 
 def p_simple_statement(p):
-    '''simple_statement : assignment_statement NEWLINE
-                        | return_statement NEWLINE
-                        | print_statement NEWLINE
-                        | expression_statement NEWLINE'''
+    '''simple_statement : assignment_statement newline_or_eof
+                        | return_statement newline_or_eof
+                        | print_statement newline_or_eof
+                        | expression_statement newline_or_eof'''
     p[0] = p[1]
+
+def p_newline_or_eof(p):
+    '''newline_or_eof : NEWLINE
+                      | EOF
+                      | '''
+    pass
 
 def p_compound_statement(p):
     '''compound_statement : if_statement
@@ -351,10 +368,18 @@ def p_comparison_op(p):
 
 def p_error(p):
     if p:
-        print(f"Syntax error at token {p.type}, value '{p.value}', line {p.lineno}, position {p.lexpos}")
+        print(f"Error de sintaxis en el token {p.type}, valor '{p.value}', línea {p.lineno}, posición {p.lexpos}")
     else:
-        print("Syntax error at EOF")
+        print("Error de sintaxis en EOF")
 
 # Construir el parser con modo de depuración
 parser = yacc.yacc(debug=True)
 parser.error = 0
+
+# Función para analizar el código
+def parse_code(code):
+    # Asegurarse de que haya un salto de línea al final del código si no termina en EOF
+    if not code.endswith('\n'):
+        code += '\n'
+    lexer = init_lexer()
+    return parser.parse(code, lexer=lexer)

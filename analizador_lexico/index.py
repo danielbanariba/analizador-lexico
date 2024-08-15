@@ -1,14 +1,35 @@
-
 from analizador_lexico.components.custom_table import custom_table
 from analizador_lexico.components.github_icon import github_icon
+from analizador_lexico.components.file_upload import file_upload_component
+from analizador_lexico.components.icons import python_icon, javascript_icon
 from analizador_lexico.state import State
 import reflex as rx
 
 def index():
-    return rx.container(
-        github_icon(),
+    return rx.box(
         rx.vstack(
-            rx.heading("Analizador y Traductor de Código Python a JavaScript"),
+            rx.heading(
+                "Analizador y Traductor de Código Python a JavaScript",
+                text_align="center",  # Esto centra el texto del título
+                width="100%",  # Asegura que el título ocupe todo el ancho disponible
+            ),
+            rx.hstack(
+                rx.spacer(),
+                rx.hstack(
+                    python_icon("95", "95"),
+                    rx.icon("arrow-right", stroke_width=2.5, size=100),
+                    javascript_icon("95", "95"),
+                    spacing="0",  # Elimina el espacio entre los iconos
+                ),
+                rx.spacer(),
+                github_icon(),
+                width="100%",
+                justify="space-between",
+            ),
+            # rx.box(
+            #     file_upload_component(),
+            #     width="100%",
+            # ),
             rx.text_area(
                 value=State.python_code,
                 placeholder="Ingrese su código Python aquí",
@@ -27,7 +48,7 @@ def index():
             rx.heading("Análisis Sintáctico", size="md"),
             rx.code_block(
                 State.syntax_output,
-                theme="twilight", #twilight, xonokai
+                theme="twilight",
                 language="apex",
                 show_line_numbers=True,
                 width="100%"
@@ -53,10 +74,14 @@ def index():
                 show_line_numbers=True,
                 width="100%"
             ),
-            # rx.heading("Información de Depuración", size="md"),
-            # rx.text_area(value=State.debug_output, is_read_only=True, height="300px", width="100%"),
             width="100%",
-            max_width="800px",
+            max_width="700px",
+            margin="0 auto",
             spacing="4",
-        )
+            padding="4",
+        ),
+        width="100%",
+        height="100%",
+        overflow_y="auto",
+        padding_top="1em",
     )
