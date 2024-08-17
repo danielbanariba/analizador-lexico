@@ -12,3 +12,5 @@ requirements.txt
 rxconfig.py
 titulo
 __pycache__
+infinite-background-animation
+noise-background

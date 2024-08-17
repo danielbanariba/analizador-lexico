@@ -2,16 +2,19 @@ from analizador_lexico.components.custom_table import custom_table
 from analizador_lexico.components.github_icon import github_icon
 from analizador_lexico.components.file_upload import file_upload_component
 from analizador_lexico.components.icons import python_icon, javascript_icon
+from analizador_lexico.components.typewriter_effect import typewriter_effect
+from analizador_lexico.components.particles_background import particles_background, particles_style
 from analizador_lexico.state import State
 import reflex as rx
 
 def index():
     return rx.box(
+        particles_background(),
         rx.vstack(
             rx.heading(
                 "Analizador y Traductor de Código Python a JavaScript",
-                text_align="center",  # Esto centra el texto del título
-                width="100%",  # Asegura que el título ocupe todo el ancho disponible
+                text_align="center",
+                width="100%",
             ),
             rx.hstack(
                 rx.spacer(),
@@ -19,17 +22,17 @@ def index():
                     python_icon("95", "95"),
                     rx.icon("arrow-right", stroke_width=2.5, size=100),
                     javascript_icon("95", "95"),
-                    spacing="0",  # Elimina el espacio entre los iconos
+                    spacing="0",
                 ),
                 rx.spacer(),
                 github_icon(),
                 width="100%",
                 justify="space-between",
             ),
-            # rx.box(
-            #     file_upload_component(),
-            #     width="100%",
-            # ),
+            rx.box(
+                file_upload_component(),
+                width="100%",
+            ),
             rx.text_area(
                 value=State.python_code,
                 placeholder="Ingrese su código Python aquí",
@@ -68,7 +71,7 @@ def index():
             rx.divider(),
             rx.heading("Código JavaScript", size="md"),
             rx.code_block(
-                State.js_output, 
+                State.js_output,
                 theme="one-dark",
                 language="javascript",
                 show_line_numbers=True,
@@ -79,9 +82,13 @@ def index():
             margin="0 auto",
             spacing="4",
             padding="4",
+            bg="rgba(17, 17, 17, 0.9)",
+            border_radius="md",
+            box_shadow="lg",
         ),
         width="100%",
         height="100%",
         overflow_y="auto",
         padding_top="1em",
+        style=particles_style,
     )
