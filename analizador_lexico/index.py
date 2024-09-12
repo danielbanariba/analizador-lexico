@@ -9,7 +9,7 @@ from analizador_lexico.view.footer import footer
 import reflex as rx
 
 def index():
-    return rx.container(
+    return rx.box(
         rx.box(
             particles_background(),
             rx.vstack(
