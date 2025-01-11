@@ -1,4 +1,4 @@
-from analizador_lexico.python_analyzer.lexer import init_lexer, parser
+from analyzepy.python_analyzer.lexer import init_lexer, parser
 from anytree import Node, RenderTree
 from typing import List, Dict
 import reflex as rx

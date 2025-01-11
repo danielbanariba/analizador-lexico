@@ -1,11 +1,12 @@
-from analizador_lexico.components.custom_table import custom_table
-from analizador_lexico.components.github_icon import github_icon
-from analizador_lexico.components.file_upload import file_upload_component
-from analizador_lexico.components.icons import python_icon, javascript_icon
-from analizador_lexico.components.typewriter_effect import typewriter_effect
-from analizador_lexico.components.particles_background import particles_background, particles_style
-from analizador_lexico.state import State
-from analizador_lexico.view.footer import footer
+from analyzepy.components.custom_table import custom_table
+from analyzepy.components.github_icon import github_icon
+from analyzepy.components.file_upload import file_upload_component
+from analyzepy.components.icons import python_icon, javascript_icon
+from analyzepy.components.typewriter_effect import typewriter_effect
+from analyzepy.components.particles_background import particles_background, particles_style
+from analyzepy.state import State
+from analyzepy.view.footer import footer
+from analyzepy.styles.styles import Size, Color, TextColor
 import reflex as rx
 
 def index():
@@ -24,12 +25,12 @@ def index():
                         python_icon("95", "95"),
                         rx.icon("arrow-right", stroke_width=2.5, size=100),
                         javascript_icon("95", "95"),
-                        spacing="0",
+                        spacing=Size.ZERO.value,
                     ),
                     rx.spacer(),
                     github_icon(),
                     width="100%",
-                    justify="space-between",
+                    justify="between",
                 ),
                 rx.box(
                     file_upload_component(),
@@ -47,19 +48,19 @@ def index():
                     rx.button("Limpiar", on_click=State.clear_all),
                 ),
                 rx.divider(),
-                rx.heading("Análisis Léxico", size="md"),
+                rx.heading("Análisis Léxico", size="3"),
                 custom_table(State.lexical_output),
                 rx.divider(),
-                rx.heading("Análisis Sintáctico", size="md"),
+                rx.heading("Análisis Sintáctico", size="3"),
                 rx.code_block(
                     State.syntax_output,
-                    theme="twilight",
+                    theme=rx.code_block.themes.twilight,
                     language="apex",
                     show_line_numbers=True,
                     width="100%"
                 ),
                 rx.divider(),
-                rx.heading("Árbol Sintáctico", size="md"),
+                rx.heading("Árbol Sintáctico", size="3"),
                 rx.box(
                     State.tree_image,
                     width="100%",
@@ -68,13 +69,13 @@ def index():
                     font_family="monospace",
                     bg="gray.100",
                     p="4",
-                    border_radius="md",
+                    border_radius="3",
                 ),
                 rx.divider(),
-                rx.heading("Código JavaScript", size="md"),
+                rx.heading("Código JavaScript", size="3"),
                 rx.code_block(
                     State.js_output,
-                    theme="one-dark",
+                    theme=rx.code_block.themes.one_dark,
                     language="javascript",
                     show_line_numbers=True,
                     width="100%"
@@ -85,7 +86,7 @@ def index():
                 spacing="4",
                 padding="4",
                 bg="rgba(17, 17, 17, 0.9)",
-                border_radius="md",
+                border_radius="3",
                 box_shadow="lg",
             ),
             width="100%",

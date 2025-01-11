@@ -1,6 +1,6 @@
 
-from analizador_lexico.index import index
-import analizador_lexico.styles.styles as styles
+from analyzepy.index import index
+import analyzepy.styles.styles as styles
 
 import reflex as rx
 

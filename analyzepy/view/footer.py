@@ -1,8 +1,8 @@
 import reflex as rx
 import datetime
-import analizador_lexico.styles.styles as styles
-from analizador_lexico.styles.styles import Size, Color, TextColor
-import analizador_lexico.data.url as URL 
+import analyzepy.styles.styles as styles
+from analyzepy.styles.styles import Size, Color, TextColor
+import analyzepy.data.url as URL 
 
 def footer() -> rx.Component:
     return rx.center(

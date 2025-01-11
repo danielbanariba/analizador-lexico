@@ -1,7 +1,7 @@
 import reflex as rx
 from enum import Enum
-from analizador_lexico.styles.colors import Color, TextColor
-from analizador_lexico.styles.fonts import Font, FontWeight
+from analyzepy.styles.colors import Color, TextColor
+from analyzepy.styles.fonts import Font, FontWeight
 
 # Ancho maximo de la pagina 
 MAX_WIDTH = "800px"
@@ -14,7 +14,7 @@ STYLESHEETS = [
 ]
 
 class Size(Enum):
-    ZERO = "0px !important"
+    ZERO = "0"
     VERY_SMALL = "0.2em"
     SMALL = "0.5em"
     MEDIUM = "0.8em"

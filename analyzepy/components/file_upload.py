@@ -1,5 +1,5 @@
 import reflex as rx
-from analizador_lexico.state import State
+from analyzepy.state import State
 
 def file_upload_component():
     return rx.box(
