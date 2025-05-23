@@ -1,7 +1,7 @@
-anytree==2.12.1
+anytree==2.13.0
 graphviz==0.20.3
-matplotlib==3.9.2
+matplotlib==3.10.3
 ply==3.11
-PyQt6==6.7.1
-reflex==0.6.6
-windows-curses==2.3.3
+PyQt6==6.9.0
+reflex==0.7.12
+windows-curses==2.4.1

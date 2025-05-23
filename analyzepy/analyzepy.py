@@ -1,4 +1,3 @@
-
 from analyzepy.index import index
 import analyzepy.styles.styles as styles
 

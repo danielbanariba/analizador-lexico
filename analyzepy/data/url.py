@@ -1,1 +1,1 @@
-DANIEL_BANARIBA = "https://www.danielbanariba.com"
+DANIEL_BANARIBA = "https://www.danielbanariba.dev"
